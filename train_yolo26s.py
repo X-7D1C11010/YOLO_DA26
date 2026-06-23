@@ -1,54 +1,63 @@
-import os
+"""YOLO26s SAR 单域监督基线。
+
+该脚本用于建立必须保留的对照组。只有当 DA 模型稳定超过该基线时，
+才能说明域对抗确实有效。
+"""
+
+from __future__ import annotations
+
+import argparse
 import sys
-import torch
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / "yolo_source"))
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / "yolo_source"))
+
 from ultralytics import YOLO
 
 
 def main():
-    DATASET_YAML = "/ssd_data/lixiang_data/YOLO_DA/dataset_sar_only.yaml"
-    MODEL_SIZE = "s"
-    EPOCHS = 100
-    IMGSZ = 1024
-    BATCH = 16
-    DEVICE = "0"
-    WORKERS = 8
-    SAVE_PERIOD = 10
+    parser = argparse.ArgumentParser(description="YOLO26s SAR 单域监督基线")
+    parser.add_argument("--data", default=str(ROOT / "dataset_sar_only.yaml"))
+    parser.add_argument("--weights", default="yolo26s.pt")
+    parser.add_argument("--epochs", type=int, default=150)
+    parser.add_argument("--imgsz", type=int, default=1024)
+    parser.add_argument("--batch", type=int, default=8)
+    parser.add_argument("--device", default="0")
+    parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--name", default="YOLO26s_SAR_baseline")
+    args = parser.parse_args()
 
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
-        total_gpu = torch.cuda.get_device_properties(0).total_memory / 1024**3
-        print(f"GPU缓存已清理 (已用: {torch.cuda.memory_allocated()/1024**3:.1f}G / 总量: {total_gpu:.1f}G)")
+    if not Path(args.data).exists():
+        raise FileNotFoundError(f"数据集配置不存在：{args.data}")
 
-    model_id = f"yolo26{MODEL_SIZE}-da"
-    config_path = f"yolo_source/ultralytics/cfg/models/26/{model_id}.yaml"
-
-    print(f"加载模型配置: {config_path}")
-    model = YOLO(config_path)
-
-    model.add_callback("on_train_epoch_end", _clear_gpu_cache)
-    model.add_callback("on_fit_epoch_end", _clear_gpu_cache)
-
-    results = model.train(
-        data=DATASET_YAML,
-        epochs=EPOCHS,
-        imgsz=IMGSZ,
-        batch=BATCH,
-        device=DEVICE,
-        workers=WORKERS,
-        save_period=SAVE_PERIOD,
+    model = YOLO(args.weights)
+    model.train(
+        data=args.data,
+        epochs=args.epochs,
+        imgsz=args.imgsz,
+        batch=args.batch,
+        device=args.device,
+        workers=args.workers,
         project="runs/detect",
-        name=f"YOLO26{MODEL_SIZE}_SAR",
-        exist_ok=True,
+        name=args.name,
+        optimizer="AdamW",
+        lr0=0.002,
+        lrf=0.05,
+        cos_lr=True,
+        patience=40,
+        degrees=10,
+        translate=0.08,
+        scale=0.30,
+        flipud=0.5,
+        fliplr=0.5,
+        hsv_h=0.0,
+        hsv_s=0.05,
+        hsv_v=0.15,
+        mosaic=0.5,
+        close_mosaic=20,
+        amp=True,
     )
-
-    print(f"\n最佳模型 mAP50: {results.results_dict.get('metrics/mAP50(B)', 'N/A')}")
-
-
-def _clear_gpu_cache(trainer):
-    torch.cuda.empty_cache()
 
 
 if __name__ == "__main__":

@@ -1,8 +1,11 @@
-path: /ssd_data/lixiang_data/Datasets 
-train: 
-  - VIS/all/images   # 光学源域
-  - SARDet-100k/images/train       # SAR目标域 (巧妙：直接两路数据混合喂入！)
-val: SARDet-100k/images/val                                            
+# 六类别实验配置。
+# 警告：VIS 的原始 aircraft 标签若仍为类别 0，不能直接与本配置混训，
+# 因为本配置类别 0 是 Ship、类别 1 才是 aircraft。必须先完成显式类别重映射。
+path: /ssd_data/lixiang_data/Datasets
+train:
+  - VIS/all/images
+  - SARDet-100k/images/train
+val: SARDet-100k/images/val
 
 nc: 6
 names:

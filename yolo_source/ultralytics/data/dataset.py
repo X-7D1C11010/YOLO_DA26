@@ -306,29 +306,22 @@ class YOLODataset(BaseDataset):
             new_batch["batch_idx"][i] += i  # add target image index for build_targets()
         new_batch["batch_idx"] = torch.cat(new_batch["batch_idx"], 0)
 
+        # 域标签约定：光学/VIS/RGB 为 0，SAR 为 1。
+        # 统一转成小写 POSIX 路径，避免原实现因大小写和 "VIS" 命名造成静默误标。
+        target_tokens = ("/sar", "sar_", "_sar", "synthetic_aperture")
+        source_tokens = ("/vis", "/optical", "/rgb")
         domain_labels = []
-        # batch 是传进来的列表，里面每个元素是一张图的字典
         for item in batch:
-            # 根据文件路径包含的文件夹名，来判断是哪个域
-            img_path = item.get('im_file', '')
-            if 'Optical' in img_path:
-                domain_labels.append(0.0)  # 源域：光学盖 0 戳
-            elif 'SAR' in img_path:
-                domain_labels.append(1.0)  # 目标域：SAR盖 1 戳
+            image_path = str(item.get("im_file", "")).replace("\\", "/").lower()
+            if any(token in image_path for token in target_tokens):
+                domain_labels.append(1.0)
+            elif any(token in image_path for token in source_tokens):
+                domain_labels.append(0.0)
             else:
-                domain_labels.append(0.0)  # 容错：默认 0
+                # 未知路径默认按源域处理，避免普通数据被误标成目标域。
+                domain_labels.append(0.0)
 
-        # 将盖好的戳放进 batch 字典，供给咱们刚刚修改的 Loss 函数使用
-        if isinstance(batch, dict):  # 如果组装后已经是字典 (如 YOLODataset)
-            batch['domain'] = torch.tensor(domain_labels, dtype=torch.float32)
-            return batch
-        else:  # 如果组装后叫 new_batch 或者是其他名字，请以源码最终 return 的变量名为准
-            # 请确保注入到马上要 return 的那个变量里
-            try:
-                # 兼容旧版本写法，通常是一个名为 batch 或 new_batch 的字典
-                locals()['new_batch']['domain'] = torch.tensor(domain_labels, dtype=torch.float32)
-            except:
-                pass
+        new_batch["domain"] = torch.tensor(domain_labels, dtype=torch.float32)
 
         return new_batch
 

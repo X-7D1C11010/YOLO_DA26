@@ -1,7 +1,7 @@
+# 独立 SAR 测试域。若要计算 mAP，必须存在与 images 对应的 labels 目录。
 path: /ssd_data/lixiang_data/Datasets/data_sar_plane_coarsness
-
 train: images
-val: images                    
+val: images
 
 nc: 1
 names:

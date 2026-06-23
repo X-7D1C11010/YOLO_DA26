@@ -1,3 +1,4 @@
+# SAR 单域监督基线，用于判断 DA 是否真的带来收益。
 path: /ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split
 train: images/train
 val: images/val

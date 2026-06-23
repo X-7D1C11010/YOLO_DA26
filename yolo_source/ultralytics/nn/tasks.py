@@ -187,8 +187,10 @@ class BaseModel(torch.nn.Module):
             # ========================================================
             # 【核心手术区】：拦截 DomainClassifier
             # ========================================================
-            if m.__class__.__name__ == "DomainClassifier":
-                domain_output = m(x, alpha)
+            if isinstance(m, DomainClassifier):
+                # 推理阶段完全跳过域判别器，避免增加独立测试和部署开销。
+                if self.training:
+                    domain_output = m(x, alpha)
                 # 将结果存入 y 数组中占位（必须存，否则 yaml 里索引会错位）
                 y.append(domain_output if m.i in self.save else None)
                 continue  # 注意：跳过 x = m(x)，确保主检测流 x 不被破坏
@@ -1703,6 +1705,11 @@ def parse_model(d, ch, verbose=True):
             c2 = args[1] if args[3] else args[1] * 4
         elif m is torch.nn.BatchNorm2d:
             args = [ch[f]]
+        elif m is DomainClassifier:
+            # 输入通道由挂载的特征层自动推断；YAML 仅需提供隐藏层通道数。
+            c1 = ch[f]
+            c2 = c1
+            args = [c1, *args]
         elif m is Concat:
             c2 = sum(ch[x] for x in f)
         elif m in frozenset(

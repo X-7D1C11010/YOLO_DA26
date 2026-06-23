@@ -1,90 +1,119 @@
-from ultralytics import YOLO
+"""统一、可追溯的模型评测脚本。"""
+
+from __future__ import annotations
+
+import argparse
+import glob
+import json
+import sys
 import time
-import os
+from pathlib import Path
 
-if __name__ == '__main__':
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / "yolo_source"))
 
-    # ============================================================
-    # 通用配置
-    # ============================================================
-    # 权重路径：根据你实际训练出的best.pt修改
-    weight_path = "/ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26n_DA-3/weights/best.pt"
-    model = YOLO(weight_path)
+from ultralytics import YOLO
 
-    CONF = 0.001              # 置信度阈值
 
-    # ============================================================
-    # 方案A：不重新训练（当前已有DA权重直接用）
-    #   ⚠️  DA模型不支持augment=True（架构被修改过，TTA自动降级）
-    #   策略：单尺度 imgsz=512（最佳单尺度）
-    #   原理：512下物体尺度更接近训练分布
-    #   预期AP50：~4-6%（比原640的2.7%略有提升，但远不如baseline的21%）
-    #   注：之前21%的结果是用YOLO_baseline标准模型测的，不是DA模型
-    # ============================================================
-    #   结论：DA模型只能靠重训解决，不重训的天花板非常低
-    # ============================================================
-    USE_RETRAINED = True  # <--- 改为 True 则使用方案B
+def _parse_sizes(value: str) -> list[int]:
+    sizes = sorted({int(item.strip()) for item in value.split(",") if item.strip()})
+    if not sizes or any(size <= 0 for size in sizes):
+        raise argparse.ArgumentTypeError("imgsz 必须是逗号分隔的正整数")
+    return sizes
 
-    if not USE_RETRAINED:
-        # ========== 方案A：不重训，单尺度 imgsz=512 ==========
-        # DA模型不支持augment=True，只能用单尺度找最优分辨率
-        print("方案A：不重训 — imgsz=512（DA模型不支持TTA）")
-        metrics = model.val(
-            data="test.yaml",
-            split="val",
-            imgsz=320,          # 最接近训练物体尺度分布的单分辨率
-            batch=32,
-            device="0",
-            conf=CONF,
-            # augment=True,     # DA模型不支持！加了等于没加
-            name="test_no_retrain_512"
+
+def _expand_weights(values: list[str]) -> list[Path]:
+    paths: list[Path] = []
+    for value in values:
+        path = Path(value).expanduser()
+        if path.is_dir():
+            paths.extend(sorted(path.glob("*.pt")))
+        elif any(char in value for char in "*?[]"):
+            paths.extend(Path(item) for item in sorted(glob.glob(value)))
+        else:
+            paths.append(path)
+    unique = list(dict.fromkeys(path.resolve() for path in paths))
+    missing = [str(path) for path in unique if not path.exists()]
+    if missing:
+        raise FileNotFoundError("以下权重不存在：\n" + "\n".join(missing))
+    return unique
+
+
+def main():
+    parser = argparse.ArgumentParser(description="YOLO 模型独立测试集评测")
+    parser.add_argument("weights", nargs="+", help="权重文件、目录或 glob")
+    parser.add_argument("--data", default=str(ROOT / "test.yaml"))
+    parser.add_argument("--split", default="val", choices=("train", "val", "test"))
+    parser.add_argument("--imgsz", type=_parse_sizes, default=_parse_sizes("640,1024,1280"))
+    parser.add_argument("--batch", type=int, default=8)
+    parser.add_argument("--device", default="0")
+    parser.add_argument("--conf", type=float, default=0.001)
+    parser.add_argument("--iou", type=float, default=0.7)
+    parser.add_argument("--max-det", type=int, default=1000)
+    parser.add_argument("--half", action="store_true")
+    parser.add_argument("--output", default=str(ROOT / "evaluation_results.jsonl"))
+    args = parser.parse_args()
+
+    data_path = Path(args.data).expanduser()
+    if not data_path.exists():
+        raise FileNotFoundError(f"测试集配置不存在：{data_path}")
+
+    weights = _expand_weights(args.weights)
+    output_path = Path(args.output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    best = None
+    with output_path.open("a", encoding="utf-8") as log_file:
+        for weight in weights:
+            model = YOLO(str(weight))
+            for imgsz in args.imgsz:
+                print(f"\n评测：{weight.name}，imgsz={imgsz}")
+                metrics = model.val(
+                    data=str(data_path),
+                    split=args.split,
+                    imgsz=imgsz,
+                    batch=args.batch,
+                    device=args.device,
+                    conf=args.conf,
+                    iou=args.iou,
+                    max_det=args.max_det,
+                    half=args.half,
+                    rect=True,
+                    plots=True,
+                    project="runs/eval",
+                    name=f"{weight.stem}_imgsz{imgsz}",
+                    exist_ok=True,
+                )
+                record = {
+                    "time": time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "weights": str(weight),
+                    "data": str(data_path.resolve()),
+                    "split": args.split,
+                    "imgsz": imgsz,
+                    "conf": args.conf,
+                    "iou": args.iou,
+                    "map50": float(metrics.box.map50),
+                    "map75": float(metrics.box.map75),
+                    "map50_95": float(metrics.box.map),
+                    "precision": float(getattr(metrics.box, "mp", 0.0)),
+                    "recall": float(getattr(metrics.box, "mr", 0.0)),
+                }
+                log_file.write(json.dumps(record, ensure_ascii=False) + "\n")
+                log_file.flush()
+                if best is None or record["map50"] > best["map50"]:
+                    best = record
+                print(
+                    f"mAP50={record['map50']:.4f}, mAP75={record['map75']:.4f}, "
+                    f"mAP50-95={record['map50_95']:.4f}"
+                )
+
+    if best:
+        print(
+            f"\n最佳组合：{Path(best['weights']).name} @ imgsz={best['imgsz']}，"
+            f"mAP50={best['map50']:.4f}"
         )
-        log_imgsz = 512
-        log_mode = "不重训-imgsz512"
+        print(f"完整结果已追加到：{output_path.resolve()}")
 
-    else:
-        # ========== 方案B：重新训练后 ==========
-        # 前提：已用 train_26.py (imgsz=1024, rect=True) 重新训练完毕
-        # 重训后的DA模型同样可以用augment=True，因为权重会重新生成
-        print("方案B：重训后 — imgsz=1024")
-        metrics = model.val(
-            data="test.yaml",
-            split="val",
-            imgsz=240,         # 与重训分辨率一致
-            batch=16,           # 1024²显存大，batch减半
-            device="0",
-            # conf=CONF,
-            rect=True,
-            # iou=0.6,
-            name="test_retrained_1024"
-        )
-        log_imgsz = 1024
-        log_mode = "重训后-imgsz1024"
 
-    # ============================================================
-    # 提取指标 & 日志
-    # ============================================================
-    map50    = metrics.box.map50
-    map75    = metrics.box.map75
-    map50_95 = metrics.box.map
-
-    current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    save_log_file = "Evaluation_Metrics_Log.txt"
-
-    with open(save_log_file, "a", encoding="utf-8") as f:
-        f.write(f"========== 测试时间: {current_time} ==========\n")
-        f.write(f"测试模式: {log_mode}\n")
-        f.write(f"测试权重: {weight_path}\n")
-        f.write(f"测试分辨率 (imgsz): {log_imgsz}\n")
-        f.write(f"置信度阈值 (conf): {CONF}\n")
-        f.write(f"--------------------------------------------\n")
-        f.write(f"AP50 (mAP@0.5)      : {map50:.4f}\n")
-        f.write(f"AP75 (mAP@0.75)     : {map75:.4f}\n")
-        f.write(f"mAP@0.5:0.95        : {map50_95:.4f}\n")
-        f.write(f"============================================\n\n")
-
-    print(f"\n测试模式: {log_mode}")
-    print(f"AP50 (mAP@0.5): {map50:.4f}")
-    print(f"AP75 (mAP@0.75): {map75:.4f}")
-    print(f"mAP@0.5:0.95: {map50_95:.4f}")
-    print(f"日志已保存至: {os.path.abspath(save_log_file)}")
+if __name__ == "__main__":
+    main()

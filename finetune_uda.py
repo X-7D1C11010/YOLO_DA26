@@ -1,354 +1,289 @@
-"""
-UDA 域对抗微调 (主干对齐与检测头隔离保护版)
-=============================================================
+"""安全的无监督域自适应：高置信伪标签 + 有标签锚定训练。
+
+旧实现只最小化域分类损失，会在没有检测约束时破坏主干特征并导致预测全零。
+本实现不直接修改 checkpoint 内部对象，而是使用 Ultralytics 标准训练与保存流程。
 """
 
-import os
-import sys
+from __future__ import annotations
+
 import argparse
-import glob
-import math
-import random
-import copy
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
+import json
+import os
+import shutil
+import sys
 from pathlib import Path
-from torch.utils.data import Dataset, DataLoader
-import cv2
-import numpy as np
-from tqdm import tqdm
 
-sys.path.insert(0, str(Path(__file__).parent / "yolo_source"))
-from ultralytics.nn.modules.block import DomainClassifier
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / "yolo_source"))
 
-class DomainDataset(Dataset):
-    """加载单域图像，不读标签"""
-    def __init__(self, image_dir, imgsz=1024, sample_ratio=1.0):
-        self.imgsz = imgsz
-        self.image_paths = []
-        for ext in (".jpg", ".jpeg", ".png", ".bmp"):
-            for p in Path(image_dir).rglob(f"*{ext}"):
-                self.image_paths.append(str(p))
-            for p in Path(image_dir).rglob(f"*{ext.upper()}"):
-                self.image_paths.append(str(p))
-        self.image_paths = sorted(set(self.image_paths))
-        if sample_ratio < 1.0 and self.image_paths:
-            random.seed(42)
-            n = max(1, int(len(self.image_paths) * sample_ratio))
-            self.image_paths = random.sample(self.image_paths, n)
-        if not self.image_paths:
-            raise ValueError(f"{image_dir} 中未找到图像")
+from ultralytics import YOLO
+from ultralytics.utils import YAML
 
-    def __len__(self):
-        return len(self.image_paths)
-
-    def __getitem__(self, idx):
-        img = cv2.imread(self.image_paths[idx])
-        if img is None:
-            return self.__getitem__((idx + 1) % len(self))
-        h, w = img.shape[:2]
-        r = self.imgsz / max(h, w)
-        if r != 1:
-            img = cv2.resize(img, (int(round(w * r)), int(round(h * r))),
-                             interpolation=cv2.INTER_LINEAR)
-        dw = self.imgsz - img.shape[1]
-        dh = self.imgsz - img.shape[0]
-        img = cv2.copyMakeBorder(img, dh // 2, dh - dh // 2, dw // 2, dw - dw // 2,
-                                 cv2.BORDER_CONSTANT, value=(114, 114, 114))
-        img = img.transpose(2, 0, 1)[::-1]
-        img = np.ascontiguousarray(img)
-        return torch.from_numpy(img).float() / 255.0
+IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp"}
 
 
-class UDAFineTuner:
-    """DANN 域对抗微调器 — 主干隔离保护版"""
+def collect_images(root: Path) -> list[Path]:
+    images = sorted(path for path in root.rglob("*") if path.is_file() and path.suffix.lower() in IMAGE_SUFFIXES)
+    if not images:
+        raise FileNotFoundError(f"目标域目录中未找到图像：{root}")
+    return images
 
-    def __init__(self, checkpoint_path, device="cuda:0", align_layer_idx=9):
-        self.device = torch.device(device)
-        self.checkpoint_path = checkpoint_path
-        self.model_name = Path(checkpoint_path).stem
-        self.sequential = None
-        self.model = None
-        self.domain_classifier = None
-        self.align_layer_idx = align_layer_idx # 默认在第9层(Backbone末端SPPF)做对抗对齐
 
-        self._load()
-        self._freeze_detector_layers() # 【核心修复】取代原有的全模型解冻
-        self._build_classifier()
-        self.initial_weight_sum = self._get_weight_sum()
+def link_image(source: Path, destination: Path, mode: str) -> str:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if destination.exists() or destination.is_symlink():
+        return "exists"
 
-    def _load(self):
-        print(f"\n📦 加载模型: {self.model_name}")
-        ckpt = torch.load(self.checkpoint_path, map_location="cpu", weights_only=False)
-        md = ckpt.get("model", ckpt)
-
-        if md is not None and hasattr(md, "model") and isinstance(md.model, nn.Sequential):
-            self.model = md
-            self.sequential = self.model.model.float()
-        else:
-            from ultralytics.nn.tasks import DetectionModel
-            self.model = DetectionModel(
-                cfg="yolo_source/ultralytics/cfg/models/26/yolo26s-da.yaml", nc=1)
-            ema = ckpt.get("ema")
-            if ema is not None:
-                sd = ema.state_dict() if hasattr(ema, "state_dict") else ema
-                if isinstance(sd, dict) and len(sd) > 0:
-                    self.model.load_state_dict(sd, strict=False)
-            self.sequential = self.model.model.float()
-        print(f"  模型总参数量: {sum(p.numel() for p in self.sequential.parameters())/1e6:.1f}M")
-
-    def _freeze_detector_layers(self):
-        """
-        核心修复：由于不看检测损失，必须强行冻结 Neck 和 Head (层10及以后)，
-        只允许前端 Backbone 接受对抗梯度进行跨域风格对齐，从物理上隔绝特征塌陷。
-        """
-        for i, m in enumerate(self.sequential):
-            if i <= self.align_layer_idx:
-                for p in m.parameters():
-                    p.requires_grad = True
+    modes = [mode] if mode != "auto" else ["symlink", "hardlink", "copy"]
+    for current in modes:
+        try:
+            if current == "symlink":
+                os.symlink(source.resolve(), destination)
+            elif current == "hardlink":
+                os.link(source, destination)
             else:
-                for p in m.parameters():
-                    p.requires_grad = False
-        
-        trainable_params = sum(p.numel() for p in self.sequential.parameters() if p.requires_grad)
-        print(f"  🔒 保护机制：已冻结层 {self.align_layer_idx + 1} 及后续全部检测网络。")
-        print(f"  🔓 当前可训练主干参数: {trainable_params/1e6:.1f}M")
+                shutil.copy2(source, destination)
+            return current
+        except OSError:
+            continue
+    raise OSError(f"无法链接或复制图像：{source}")
 
-    def _build_classifier(self):
-        self.sequential.to(self.device).eval()
-        with torch.no_grad():
-            features = self._forward_features(torch.randn(1, 3, 1024, 1024, device=self.device))
-            in_ch = features.shape[1]
-        self.sequential.train()
-        self.domain_classifier = DomainClassifier(c1=in_ch, c2=256).to(self.device).train()
-        print(f"  🛠️ 域判别器架设成功: 输入通道={in_ch} → 隐层=256 → 输出=1")
 
-    def _forward_features(self, imgs):
-        """前向传播到指定的 Backbone 终止层提取域特征"""
-        x = imgs
-        y = []
-        for i, m in enumerate(self.sequential):
-            f_from = getattr(m, "f", -1)
-            if f_from != -1:
-                x = y[f_from] if isinstance(f_from, int) else [x if j == -1 else y[j] for j in f_from]
-            x = m(x)
-            if i == self.align_layer_idx: 
-                return x
-            y.append(x)
-        return x
+def resolve_dataset_entries(data_yaml: Path, key: str) -> tuple[dict, list[str]]:
+    config = YAML.load(data_yaml)
+    base = Path(config.get("path") or data_yaml.parent)
+    if not base.is_absolute():
+        base = (data_yaml.parent / base).resolve()
 
-    def _get_weight_sum(self):
-        with torch.no_grad():
-            return sum(p.abs().sum().item() for p in self.sequential.parameters() if p.requires_grad)
+    value = config.get(key, [])
+    values = value if isinstance(value, list) else [value]
+    resolved = []
+    for item in values:
+        if not item:
+            continue
+        path = Path(str(item))
+        resolved.append(str(path if path.is_absolute() else (base / path).resolve()))
+    return config, resolved
 
-    def _get_grad_norm(self, module):
-        total_norm = 0.0
-        for p in module.parameters():
-            if p.grad is not None:
-                param_norm = p.grad.data.norm(2)
-                total_norm += param_norm.item() ** 2
-        return total_norm ** 0.5
 
-    def _train_epoch(self, loader_a, loader_b, optimizer, alpha):
-        self.sequential.train()
-        self.domain_classifier.train()
-        loss_sum = acc_a_sum = acc_b_sum = 0.0
-        n = 0
-        
-        grad_classifier_sum = grad_backbone_mid_sum = grad_backbone_end_sum = 0.0
+def write_training_yaml(
+    output_path: Path,
+    base_config: dict,
+    anchor_train: list[str],
+    pseudo_images: Path,
+    validation: list[str],
+) -> None:
+    train_entries = [*anchor_train, str(pseudo_images.resolve())]
+    lines = ["path: /", "train:"]
+    lines.extend(f"  - {json.dumps(path, ensure_ascii=False)}" for path in train_entries)
+    lines.append("val:")
+    lines.extend(f"  - {json.dumps(path, ensure_ascii=False)}" for path in validation)
+    lines.append(f"nc: {int(base_config['nc'])}")
+    names = base_config.get("names", {0: "aircraft"})
+    lines.append("names:")
+    if isinstance(names, list):
+        for index, name in enumerate(names):
+            lines.append(f"  {index}: {json.dumps(str(name), ensure_ascii=False)}")
+    else:
+        for index, name in sorted(names.items(), key=lambda item: int(item[0])):
+            lines.append(f"  {int(index)}: {json.dumps(str(name), ensure_ascii=False)}")
+    output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-        pbar = tqdm(zip(loader_a, loader_b), desc=f"  Train (α={alpha:.2f})", leave=False, total=min(len(loader_a), len(loader_b)))
-        for imgs_a, imgs_b in pbar:
-            imgs_a, imgs_b = imgs_a.to(self.device), imgs_b.to(self.device)
-            
-            fa = self._forward_features(imgs_a)
-            fb = self._forward_features(imgs_b)
-            
-            pa = self.domain_classifier(fa, alpha)
-            pb = self.domain_classifier(fb, alpha)
-            
-            loss = 0.5 * (F.binary_cross_entropy_with_logits(pa, torch.zeros_like(pa)) +
-                          F.binary_cross_entropy_with_logits(pb, torch.ones_like(pb)))
-            
-            optimizer.zero_grad()
-            loss.backward()
-            
-            # 【核心探针】监控活动主干层的真实梯度范数
-            grad_classifier_sum += self._get_grad_norm(self.domain_classifier)
-            if len(self.sequential) > self.align_layer_idx:
-                grad_backbone_end_sum += self._get_grad_norm(self.sequential[self.align_layer_idx]) # SPPF末端
-            if len(self.sequential) > 4:
-                grad_backbone_mid_sum += self._get_grad_norm(self.sequential[4]) # 主干中段
 
-            # 联合裁切主干与判别器梯度
-            torch.nn.utils.clip_grad_norm_(list(self.sequential.parameters()) + list(self.domain_classifier.parameters()), max_norm=5.0)
-            optimizer.step()
+def generate_pseudo_dataset(args, teacher: YOLO) -> tuple[Path, dict]:
+    target_root = Path(args.target_images).expanduser().resolve()
+    images = collect_images(target_root)
+    dataset_root = Path(args.output).expanduser().resolve() / "pseudo_dataset"
+    if dataset_root.exists():
+        if not args.overwrite_pseudo:
+            raise FileExistsError(
+                f"伪标签目录已存在：{dataset_root}。请更换 --output，"
+                "或确认后使用 --overwrite-pseudo 重新生成。"
+            )
+        shutil.rmtree(dataset_root)
+    image_root = dataset_root / "images" / "train"
+    label_root = dataset_root / "labels" / "train"
+    label_root.mkdir(parents=True, exist_ok=True)
 
-            loss_sum += loss.item()
-            with torch.no_grad():
-                acc_a_sum += (pa.sigmoid() < 0.5).float().mean().item()
-                acc_b_sum += (pb.sigmoid() > 0.5).float().mean().item()
-            n += 1
-            
-            pbar.set_postfix(loss=f"{loss.item():.4f}", a_acc=f"{acc_a_sum/n:.2f}", b_acc=f"{acc_b_sum/n:.2f}")
+    stats = {
+        "total_images": len(images),
+        "accepted_images": 0,
+        "empty_images": 0,
+        "rejected_boxes": 0,
+        "accepted_boxes": 0,
+        "link_modes": {},
+    }
 
-        stats = {
-            "loss": loss_sum / n,
-            "acc": 0.5 * (acc_a_sum + acc_b_sum) / n,
-            "grad_cls": grad_classifier_sum / n,
-            "grad_back_end": grad_backbone_end_sum / n,
-            "grad_back_mid": grad_backbone_mid_sum / n
-        }
-        return stats
+    predictions = teacher.predict(
+        source=[str(path) for path in images],
+        stream=True,
+        imgsz=args.imgsz,
+        conf=args.pseudo_conf,
+        iou=args.pseudo_iou,
+        max_det=args.max_det,
+        device=args.device,
+        half=args.half,
+        verbose=False,
+    )
+    for result in predictions:
+        source = Path(result.path).resolve()
+        relative = source.relative_to(target_root)
+        boxes = result.boxes
+        accepted = []
+        if boxes is not None and len(boxes):
+            xywhn = boxes.xywhn.detach().cpu().tolist()
+            classes = boxes.cls.detach().cpu().tolist()
+            confidences = boxes.conf.detach().cpu().tolist()
+            for cls_id, confidence, box in zip(classes, confidences, xywhn):
+                x, y, width, height = box
+                area = width * height
+                class_id = int(cls_id)
+                if (
+                    class_id < 0
+                    or class_id >= args.nc
+                    or confidence < args.pseudo_conf
+                    or area < args.min_box_area
+                    or area > args.max_box_area
+                ):
+                    stats["rejected_boxes"] += 1
+                    continue
+                accepted.append((class_id, x, y, width, height, confidence))
 
-    @torch.no_grad()
-    def _validate_domain_confusion(self, val_loader_a, val_loader_b, alpha=1.0):
-        self.sequential.eval()
-        self.domain_classifier.eval()
-        loss_sum = acc_a_sum = acc_b_sum = 0.0
-        n = 0
-        
-        for imgs_a, imgs_b in zip(val_loader_a, val_loader_b):
-            imgs_a, imgs_b = imgs_a.to(self.device), imgs_b.to(self.device)
-            fa = self._forward_features(imgs_a)
-            fb = self._forward_features(imgs_b)
-            
-            pa = self.domain_classifier(fa, alpha)
-            pb = self.domain_classifier(fb, alpha)
-            
-            loss = 0.5 * (F.binary_cross_entropy_with_logits(pa, torch.zeros_like(pa)) +
-                          F.binary_cross_entropy_with_logits(pb, torch.ones_like(pb)))
-            
-            loss_sum += loss.item()
-            acc_a_sum += (pa.sigmoid() < 0.5).float().mean().item()
-            acc_b_sum += (pb.sigmoid() > 0.5).float().mean().item()
-            n += 1
-            if n >= 20: break
-                
-        val_acc = 0.5 * (acc_a_sum + acc_b_sum) / n
-        error_rate = 1.0 - val_acc
-        proxy_a_distance = 2.0 * abs(1.0 - 2.0 * error_rate) 
+        if not accepted and not args.include_empty:
+            stats["empty_images"] += 1
+            continue
 
-        return loss_sum / n, val_acc, proxy_a_distance
+        destination_image = image_root / relative
+        used_mode = link_image(source, destination_image, args.link_mode)
+        stats["link_modes"][used_mode] = stats["link_modes"].get(used_mode, 0) + 1
+        label_path = (label_root / relative).with_suffix(".txt")
+        label_path.parent.mkdir(parents=True, exist_ok=True)
+        label_path.write_text(
+            "".join(f"{cls_id} {x:.8f} {y:.8f} {w:.8f} {h:.8f}\n" for cls_id, x, y, w, h, _ in accepted),
+            encoding="utf-8",
+        )
+        stats["accepted_images"] += 1
+        stats["accepted_boxes"] += len(accepted)
 
-    def fine_tune(self, domain_a, domain_b, output_dir,
-                  epochs=30, imgsz=1024, batch=8, lr=1e-3, workers=4, sample_ratio=1.0):
-        print(f"\n{'='*60}")
-        print(f"🚀 启动隔离保护版 UDA 对抗微调")
-        print(f"{'='*60}")
+    if stats["accepted_images"] < args.min_pseudo_images:
+        raise RuntimeError(
+            f"仅生成 {stats['accepted_images']} 张伪标注图像，低于安全下限 {args.min_pseudo_images}。"
+            "请先提升教师模型、检查目标域图像，或谨慎降低 --pseudo-conf。"
+        )
 
-        ds_a = DomainDataset(domain_a, imgsz, sample_ratio)
-        ds_b = DomainDataset(domain_b, imgsz, sample_ratio)
-        
-        val_size_a = max(1, int(len(ds_a) * 0.1))
-        val_size_b = max(1, int(len(ds_b) * 0.1))
-        
-        train_ds_a, val_ds_a = torch.utils.data.random_split(ds_a, [len(ds_a) - val_size_a, val_size_a])
-        train_ds_b, val_ds_b = torch.utils.data.random_split(ds_b, [len(ds_b) - val_size_b, val_size_b])
-        
-        print(f"  源域(A): 训练 {len(train_ds_a)} | 验证 {len(val_ds_a)}")
-        print(f"  目标域(B): 训练 {len(train_ds_b)} | 验证 {len(val_ds_b)}")
-
-        dl_a = DataLoader(train_ds_a, batch, shuffle=True, num_workers=workers, pin_memory=True, drop_last=True)
-        dl_b = DataLoader(train_ds_b, batch, shuffle=True, num_workers=workers, pin_memory=True, drop_last=True)
-        val_dl_a = DataLoader(val_ds_a, batch, shuffle=False, num_workers=workers, pin_memory=True)
-        val_dl_b = DataLoader(val_ds_b, batch, shuffle=False, num_workers=workers, pin_memory=True)
-
-        params = [p for p in self.sequential.parameters() if p.requires_grad]
-        params += list(self.domain_classifier.parameters())
-        optim = torch.optim.AdamW(params, lr=lr, weight_decay=1e-4)
-
-        print("\n>>> 微调前基线特征间隙评估 <<<")
-        init_val_loss, init_val_acc, init_pad = self._validate_domain_confusion(val_dl_a, val_dl_b, alpha=0.0)
-        print(f"   ➤ 初始独立验证集判别准确率: {init_val_acc:.4f}")
-        print(f"   ➤ 初始 Proxy A-Distance (PAD): {init_pad:.4f}")
-
-        best_loss = float("inf")
-        for ep in range(1, epochs + 1):
-            t = ep / epochs
-            alpha = min(1.0, 2.0 / (1.0 + math.exp(-10.0 * t)) - 1.0)
-            cos_lr = lr * 0.01 + 0.5 * (lr - lr * 0.01) * (1.0 + math.cos(math.pi * t))
-            for pg in optim.param_groups:
-                pg["lr"] = cos_lr
-                
-            train_stats = self._train_epoch(dl_a, dl_b, optim, alpha)
-            val_loss, val_acc, val_pad = self._validate_domain_confusion(val_dl_a, val_dl_b, alpha)
-            
-            weight_diff = abs(self._get_weight_sum() - self.initial_weight_sum)
-            
-            print(f"\n[Epoch {ep:02d}/{epochs}] α={alpha:.3f} | lr={cos_lr:.2e} | 主干ΔW={weight_diff:.2f}")
-            print(f"  ├─ 训练集表现: Loss={train_stats['loss']:.4f} | Domain Acc={train_stats['acc']:.3f}")
-            print(f"  ├─ 验证集混淆: Loss={val_loss:.4f} | Domain Acc={val_acc:.3f} | A-Distance={val_pad:.4f}")
-            print(f"  └─ 隔离层梯度: 判别器={train_stats['grad_cls']:.4f} | 主干末(L9)={train_stats['grad_back_end']:.4f} | 主干中(L4)={train_stats['grad_back_mid']:.4f}")
-
-            if val_loss < best_loss:
-                best_loss = val_loss
-
-        print("\n>>> 对抗微调结束最终评估 <<<")
-        print(f"   ➤ 最终跨域验证 A-Distance: {val_pad:.4f} (期望此指标比初始降低)")
-        return best_loss
-
-    def save(self, output_dir):
-        os.makedirs(output_dir, exist_ok=True)
-        self.sequential.to("cpu")
-        self.domain_classifier.to("cpu")
-        out = os.path.join(output_dir, f"{self.model_name}_finetuned.pt")
-        ckpt = torch.load(self.checkpoint_path, map_location="cpu", weights_only=False)
-        
-        ckpt["model"] = copy.deepcopy(self.model).half()
-        
-        # 强制将我们冻结保持的Head状态与优化后的Backbone完美同步给 EMA
-        if "ema" in ckpt:
-            ckpt["ema"] = copy.deepcopy(self.model).half()
-        if "updates" in ckpt:
-            ckpt["updates"] = None
-        if "optimizer" in ckpt:
-            ckpt["optimizer"] = None
-            
-        torch.save(ckpt, out)
-        print(f"\n  💾 安全对抗微调模型及EMA已同步落盘: {out}")
-        self.sequential.to(self.device)
-        self.domain_classifier.to(self.device)
+    manifest = dataset_root / "pseudo_manifest.json"
+    manifest.write_text(json.dumps(stats, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(
+        f"伪标签完成：{stats['accepted_images']}/{stats['total_images']} 张图像，"
+        f"{stats['accepted_boxes']} 个框"
+    )
+    return image_root, stats
 
 
 def main():
-    parser = argparse.ArgumentParser(description="DANN UDA 隔离保护微调")
-    parser.add_argument("--model_dir", type=str, default='/ssd_data/lixiang_data/YOLO_DA/runs/detect/runs/detect/YOLO26s_SAR/weights')
-    parser.add_argument("--domain_A", type=str, default='/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val')
-    parser.add_argument("--domain_B", type=str, default='/ssd_data/lixiang_data/Datasets/data_sar_plane_coarsness/images')
-    parser.add_argument("--output_dir", type=str, default="/ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_uda_yolo")
-    parser.add_argument("--sample_ratio", type=float, default=1.0)
+    parser = argparse.ArgumentParser(description="安全 UDA：伪标签自训练")
+    parser.add_argument("--weights", required=True, help="教师/初始学生权重")
+    parser.add_argument("--target-images", required=True, help="无标签目标域图像根目录")
+    parser.add_argument("--base-data", default=str(ROOT / "dataset_sar_only.yaml"), help="有标签锚定集与验证集")
+    parser.add_argument("--output", default=str(ROOT / "runs" / "uda_self_train"))
+    parser.add_argument("--pseudo-conf", type=float, default=0.70)
+    parser.add_argument("--pseudo-iou", type=float, default=0.60)
+    parser.add_argument("--min-box-area", type=float, default=1e-5)
+    parser.add_argument("--max-box-area", type=float, default=0.50)
+    parser.add_argument("--min-pseudo-images", type=int, default=100)
+    parser.add_argument("--max-det", type=int, default=300)
+    parser.add_argument("--include-empty", action="store_true")
+    parser.add_argument("--overwrite-pseudo", action="store_true")
+    parser.add_argument("--no-anchor", action="store_true", help="不混入有标签训练集（不推荐）")
+    parser.add_argument("--link-mode", choices=("auto", "symlink", "hardlink", "copy"), default="auto")
     parser.add_argument("--epochs", type=int, default=30)
     parser.add_argument("--imgsz", type=int, default=1024)
     parser.add_argument("--batch", type=int, default=8)
-    parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--lr0", type=float, default=2e-4)
+    parser.add_argument("--freeze", type=int, default=3)
+    parser.add_argument("--device", default="0")
     parser.add_argument("--workers", type=int, default=4)
-    parser.add_argument("--device", type=str, default="0")
+    parser.add_argument("--half", action="store_true")
     args = parser.parse_args()
 
-    model_files = sorted(glob.glob(os.path.join(args.model_dir, "*.pt")))
-    if not model_files:
-        print(f"❌ 未找到权重文件")
-        return
+    weights = Path(args.weights).expanduser()
+    base_data = Path(args.base_data).expanduser()
+    if not weights.exists():
+        raise FileNotFoundError(f"权重不存在：{weights}")
+    if not base_data.exists():
+        raise FileNotFoundError(f"锚定数据配置不存在：{base_data}")
+    args.nc = int(YAML.load(base_data)["nc"])
 
-    device = f"cuda:{args.device}" if torch.cuda.is_available() else "cpu"
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
+    output = Path(args.output).expanduser().resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    teacher = YOLO(str(weights))
 
-    for mp in model_files:
-        try:
-            tuner = UDAFineTuner(mp, device, align_layer_idx=9)
-            tuner.fine_tune(args.domain_A, args.domain_B, args.output_dir,
-                            args.epochs, args.imgsz, args.batch, args.lr, args.workers,
-                            args.sample_ratio)
-            tuner.save(args.output_dir)
-        except Exception as e:
-            print(f"❌ {Path(mp).name} 失败: {e}")
-            import traceback
-            traceback.print_exc()
+    print("先在有标签验证集上记录微调前基线……")
+    before = teacher.val(data=str(base_data), imgsz=args.imgsz, batch=args.batch, device=args.device, plots=False)
+    before_map50 = float(before.box.map50)
 
-    print("🎉 任务结束!")
+    pseudo_images, pseudo_stats = generate_pseudo_dataset(args, teacher)
+    base_config, anchor_train = resolve_dataset_entries(base_data.resolve(), "train")
+    _, validation = resolve_dataset_entries(base_data.resolve(), "val")
+    if args.no_anchor:
+        anchor_train = []
+    if not validation:
+        raise ValueError("base-data 必须提供有标签 val 集，用于阻止微调退化。")
+
+    generated_yaml = output / "uda_train.yaml"
+    write_training_yaml(generated_yaml, base_config, anchor_train, pseudo_images, validation)
+
+    student = YOLO(str(weights))
+    results = student.train(
+        data=str(generated_yaml),
+        epochs=args.epochs,
+        imgsz=args.imgsz,
+        batch=args.batch,
+        device=args.device,
+        workers=args.workers,
+        project=str(output),
+        name="student",
+        exist_ok=False,
+        optimizer="AdamW",
+        lr0=args.lr0,
+        lrf=0.10,
+        weight_decay=5e-4,
+        warmup_epochs=2,
+        cos_lr=True,
+        freeze=args.freeze,
+        patience=10,
+        mosaic=0.0,
+        mixup=0.0,
+        degrees=5.0,
+        translate=0.05,
+        scale=0.15,
+        flipud=0.5,
+        fliplr=0.5,
+        hsv_h=0.0,
+        hsv_s=0.05,
+        hsv_v=0.10,
+        close_mosaic=0,
+        amp=True,
+    )
+
+    best_path = Path(results.save_dir) / "weights" / "best.pt"
+    best_model = YOLO(str(best_path))
+    after = best_model.val(data=str(base_data), imgsz=args.imgsz, batch=args.batch, device=args.device, plots=True)
+    after_map50 = float(after.box.map50)
+    summary = {
+        "weights": str(weights.resolve()),
+        "best": str(best_path.resolve()),
+        "baseline_map50": before_map50,
+        "finetuned_map50": after_map50,
+        "pseudo": pseudo_stats,
+    }
+    (output / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    print(f"锚定验证集 mAP50：{before_map50:.4f} -> {after_map50:.4f}")
+    if after_map50 < before_map50 - 0.02:
+        print("警告：微调后锚定集下降超过 2 个百分点，不建议将该权重用于独立测试。")
+    print(f"候选权重：{best_path}")
+
 
 if __name__ == "__main__":
     main()

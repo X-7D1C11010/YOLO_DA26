@@ -1,9 +1,11 @@
-path: /ssd_data/lixiang_data/Datasets 
-train: 
-  - VIS/images/train   # 光学源域
-  - SAR_Aircraft_noMSAR_jpg_split/images/train       # SAR目标域 (巧妙：直接两路数据混合喂入！)
-val: SAR_Aircraft_noMSAR_jpg_split/images/val                     
-test: SAR_Aircraft_noMSAR_jpg_split/images/test                         
+# 光学 + SAR 双域单类别训练配置。
+# 重要：两套数据的标签都必须把 aircraft 映射为类别 0。
+path: /ssd_data/lixiang_data/Datasets
+train:
+  - VIS/images/train
+  - SAR_Aircraft_noMSAR_jpg_split/images/train
+val: SAR_Aircraft_noMSAR_jpg_split/images/val
+test: SAR_Aircraft_noMSAR_jpg_split/images/test
 
 nc: 1
 names:

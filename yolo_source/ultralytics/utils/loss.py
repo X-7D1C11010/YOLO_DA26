@@ -471,9 +471,9 @@ class v8DetectionLoss:
         """Calculate the sum of the loss for box, cls and dfl multiplied by batch size."""
 
         domain_preds = None
-        if isinstance(preds, dict) and 'domain_preds' in preds:
-            domain_preds = preds.pop('domain_preds')
-            normal_preds = preds
+        if isinstance(preds, dict) and "domain_preds" in preds:
+            domain_preds = preds["domain_preds"]
+            normal_preds = {key: value for key, value in preds.items() if key != "domain_preds"}
         elif (isinstance(preds, tuple) and len(preds) == 2 and
               isinstance(preds[1], torch.Tensor) and preds[1].ndim == 2 and preds[1].shape[1] == 1):
             normal_preds, domain_preds = preds
@@ -490,21 +490,38 @@ class v8DetectionLoss:
         # =========================================================
         # 3. 计算域对抗 Loss (保持不变，继续执行域对齐)
         # =========================================================
-        if domain_preds is not None:
-            bce_loss = nn.BCEWithLogitsLoss()
+        self.last_domain_loss = torch.zeros((), device=self.device)
+        if domain_preds is not None and self.domain_weight > 0:
+            bce_loss = nn.BCEWithLogitsLoss(reduction="none")
 
-            if 'domain' in batch:
-                domain_targets = batch['domain'].to(self.device).float().view(-1, 1)
+            if "domain" in batch:
+                domain_targets = batch["domain"].to(self.device).float().view(-1, 1)
             else:
                 # 【修复】根据图像路径自动判断域标签
                 # 光学图像(源域) -> domain=0, SAR图像(目标域) -> domain=1
                 domain_targets = torch.zeros_like(domain_preds)
-                if 'im_file' in batch:
-                    for i, im_path in enumerate(batch['im_file']):
-                        if 'SAR' in str(im_path) or 'sar' in str(im_path):
+                if "im_file" in batch:
+                    for i, im_path in enumerate(batch["im_file"]):
+                        if "sar" in str(im_path).lower():
                             domain_targets[i] = 1.0
 
-            l_domain = bce_loss(domain_preds, domain_targets)
+            if domain_targets.shape != domain_preds.shape:
+                raise ValueError(
+                    f"域标签形状 {tuple(domain_targets.shape)} 与域预测形状 {tuple(domain_preds.shape)} 不一致。"
+                )
+            domain_loss_raw = bce_loss(domain_preds, domain_targets)
+            positive = domain_targets.sum()
+            negative = domain_targets.numel() - positive
+            if positive > 0 and negative > 0:
+                # 每个 batch 内对两个域等权，避免样本量更大的域主导域判别器。
+                sample_weights = torch.where(
+                    domain_targets > 0.5,
+                    0.5 / positive,
+                    0.5 / negative,
+                )
+                l_domain = (domain_loss_raw * sample_weights).sum()
+            else:
+                l_domain = domain_loss_raw.mean()
             batch_size = domain_preds.shape[0]
             
             # 【新增】域对抗损失权重（可调节）
@@ -512,11 +529,8 @@ class v8DetectionLoss:
 
             # 加上域分类 loss
             loss_sum = loss_sum + l_domain * batch_size * domain_weight
-            # 扩展loss_items以包含域损失（用于日志记录）
-            if len(loss_items) == 3:
-                loss_items = torch.cat([loss_items, l_domain.detach().unsqueeze(0)])
-            else:
-                loss_items[3] = l_domain.detach()
+            # 保持 Ultralytics 的 box/cls/dfl 三项日志形状，避免训练器与验证器长度不一致。
+            self.last_domain_loss = l_domain.detach()
 
         return loss_sum, loss_items
 
