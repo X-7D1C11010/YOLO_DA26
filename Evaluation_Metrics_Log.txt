@@ -1,0 +1,234 @@
+========== 测试时间: 2026-05-25 10:10:37 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-8/weights/epoch20.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4343
+AP75 (mAP@0.75)     : 0.0752
+mAP@0.5:0.95        : 0.1597
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-8/weights/epoch20.pt============================================
+
+========== 测试时间: 2026-05-25 10:11:00 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-8/weights/epoch10.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4322
+AP75 (mAP@0.75)     : 0.1350
+mAP@0.5:0.95        : 0.1813
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-8/weights/epoch10.pt============================================
+
+========== 测试时间: 2026-05-25 10:11:18 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-8/weights/epoch30.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4302
+AP75 (mAP@0.75)     : 0.0804
+mAP@0.5:0.95        : 0.1692
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-8/weights/epoch30.pt============================================
+
+========== 测试时间: 2026-05-25 10:11:48 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-5/weights/epoch20.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4078
+AP75 (mAP@0.75)     : 0.0555
+mAP@0.5:0.95        : 0.1398
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-5/weights/epoch20.pt============================================
+
+========== 测试时间: 2026-05-25 10:12:23 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-5/weights/epoch10.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4511
+AP75 (mAP@0.75)     : 0.1336
+mAP@0.5:0.95        : 0.1932
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-5/weights/epoch10.pt============================================
+
+========== 测试时间: 2026-05-25 20:38:49 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/runs/detect/YOLO26s_SAR/weights/epoch10.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4604
+AP75 (mAP@0.75)     : 0.1484
+mAP@0.5:0.95        : 0.1996
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/runs/detect/YOLO26s_SAR/weights/epoch10.pt============================================
+
+========== 测试时间: 2026-05-25 20:39:34 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/runs/detect/YOLO26s_SAR/weights/epoch20.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4365
+AP75 (mAP@0.75)     : 0.0579
+mAP@0.5:0.95        : 0.1521
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/runs/detect/YOLO26s_SAR/weights/epoch20.pt============================================
+
+========== 测试时间: 2026-05-26 20:50:14 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/best.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4098
+AP75 (mAP@0.75)     : 0.0264
+mAP@0.5:0.95        : 0.1307
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/best.pt============================================
+
+========== 测试时间: 2026-05-26 20:48:56 ==========
+
+========== 测试时间: 2026-05-26 20:46:43 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/epoch10.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4424
+AP75 (mAP@0.75)     : 0.0786
+mAP@0.5:0.95        : 0.1651
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/epoch10.pt============================================
+
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/epoch20.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4613
+AP75 (mAP@0.75)     : 0.1524
+mAP@0.5:0.95        : 0.1940
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/epoch20.pt============================================
+
+========== 测试时间: 2026-05-26 20:47:38 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/epoch30.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4239
+AP75 (mAP@0.75)     : 0.0387
+mAP@0.5:0.95        : 0.1398
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/epoch30.pt============================================
+
+========== 测试时间: 2026-05-26 20:48:03 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/epoch40.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4139
+AP75 (mAP@0.75)     : 0.0310
+mAP@0.5:0.95        : 0.1355
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/epoch40.pt============================================
+
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/epoch50.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4113
+AP75 (mAP@0.75)     : 0.0271
+mAP@0.5:0.95        : 0.1340
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/epoch50.pt============================================
+
+
+========== 测试时间: 2026-05-27 09:45:04 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/epoch60.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4089
+AP75 (mAP@0.75)     : 0.0252
+mAP@0.5:0.95        : 0.1302
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/YOLO26s_DA-6/weights/epoch60.pt============================================
+
+========== 测试时间: 2026-05-28 17:03:56 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/best_finetuned.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.1638
+AP75 (mAP@0.75)     : 0.0160
+mAP@0.5:0.95        : 0.0632
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/best_finetuned.pt============================================
+
+========== 测试时间: 2026-05-28 17:04:19 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/epoch10_finetuned.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4424
+AP75 (mAP@0.75)     : 0.0785
+mAP@0.5:0.95        : 0.1651
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/epoch10_finetuned.pt============================================
+
+========== 测试时间: 2026-05-28 17:04:38 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/epoch20_finetuned.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4550
+AP75 (mAP@0.75)     : 0.0512
+mAP@0.5:0.95        : 0.1528
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/epoch20_finetuned.pt============================================
+
+========== 测试时间: 2026-05-28 17:07:02 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/epoch30_finetuned.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4239
+AP75 (mAP@0.75)     : 0.0387
+mAP@0.5:0.95        : 0.1397
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/epoch30_finetuned.pt============================================
+
+========== 测试时间: 2026-06-02 13:52:49 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/best_finetuned.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.2697
+AP75 (mAP@0.75)     : 0.1135
+mAP@0.5:0.95        : 0.1281
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/best_finetuned.pt============================================
+
+========== 测试时间: 2026-06-02 13:53:23 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/epoch10_finetuned.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4424
+AP75 (mAP@0.75)     : 0.0785
+mAP@0.5:0.95        : 0.1651
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/epoch10_finetuned.pt============================================
+
+========== 测试时间: 2026-06-02 13:53:39 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/epoch20_finetuned.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4550
+AP75 (mAP@0.75)     : 0.0512
+mAP@0.5:0.95        : 0.1528
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/epoch20_finetuned.pt============================================
+
+========== 测试时间: 2026-06-02 16:29:51 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_uda/best_finetuned.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.0034
+AP75 (mAP@0.75)     : 0.0002
+mAP@0.5:0.95        : 0.0009
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_uda/best_finetuned.pt============================================
+
+========== 测试时间: 2026-06-02 16:30:48 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_uda/epoch10_finetuned.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4424
+AP75 (mAP@0.75)     : 0.0785
+mAP@0.5:0.95        : 0.1651
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_uda/epoch10_finetuned.pt============================================
+
+========== 测试时间: 2026-06-02 16:31:15 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_uda/epoch20_finetuned.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4550
+AP75 (mAP@0.75)     : 0.0512
+mAP@0.5:0.95        : 0.1528
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_uda/epoch20_finetuned.pt============================================
+
+========== 测试时间: 2026-06-11 14:14:47 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_uda/epoch20_finetuned.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4550
+AP75 (mAP@0.75)     : 0.0512
+mAP@0.5:0.95        : 0.1528
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_uda/epoch20_finetuned.pt============================================
+
+========== 测试时间: 2026-06-11 14:17:03 ==========
+测试权重: /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/epoch20_finetuned.pt
+测试分辨率 (imgsz): 240
+--------------------------------------------
+AP50 (mAP@0.5)      : 0.4550
+AP75 (mAP@0.75)     : 0.0512
+mAP@0.5:0.95        : 0.1528
+conf                : 0model path          : /ssd_data/lixiang_data/YOLO_DA/runs/detect/finetuned_coral/epoch20_finetuned.pt============================================

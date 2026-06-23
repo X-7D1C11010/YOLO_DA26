@@ -1,0 +1,14 @@
+path: /ssd_data/lixiang_data/Datasets 
+train: 
+  - VIS/all/images   # 光学源域
+  - SARDet-100k/images/train       # SAR目标域 (巧妙：直接两路数据混合喂入！)
+val: SARDet-100k/images/val                                            
+
+nc: 6
+names:
+  0: Ship
+  1: aircraft
+  2: car
+  3: tank
+  4: bridge
+  5: harbor

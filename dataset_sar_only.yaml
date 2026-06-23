@@ -1,0 +1,8 @@
+path: /ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split
+train: images/train
+val: images/val
+test: images/test
+
+nc: 1
+names:
+  0: aircraft

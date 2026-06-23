@@ -1,0 +1,282 @@
+nohup: ignoring input
+
+📦 加载模型: best
+  参数量: 9.9M, 层数: 24
+
+============================================================
+🚀 启动 Deep CORAL 域对齐微调
+============================================================
+  源域 (A): /ssd_data/lixiang_data/Datasets/VIS/all/images
+  目标域(B): /ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val
+  超参数: epochs=10, batch=8, lr=0.0001
+  域数据集加载: 15080 张图像 from /ssd_data/lixiang_data/Datasets/VIS/all/images
+  域数据集加载: 3111 张图像 from /ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val
+
+>>> 微调前基线评估 <<<
+
+--------------------------------------------------
+📊 正在执行域特征分布量化评估...
+   ➤ 协方差距离 (CORAL Loss): 21.3000
+   ➤ 特征中心距 (L1 Mean Gap): 0.0935
+   ➤ 域A特征统计: Mean=0.1936, Std=0.1563
+   ➤ 域B特征统计: Mean=0.2049, Std=0.1200
+--------------------------------------------------
+
+
+>>> 开始迭代训练 <<<
+  Training:   0%|          | 0/388 [00:00<?, ?it/s]                                                   Traceback (most recent call last):
+  File "/ssd_data/lixiang_data/YOLO_DA/finetune_da.py", line 342, in main
+    tuner.fine_tune(args.domain_A, args.domain_B, args.output_dir,
+  File "/ssd_data/lixiang_data/YOLO_DA/finetune_da.py", line 269, in fine_tune
+    avg_loss, avg_coral, avg_l2, fa_u, fb_u = self._train_epoch(dl_a, dl_b, optim, coral_weight, l2_weight)
+  File "/ssd_data/lixiang_data/YOLO_DA/finetune_da.py", line 205, in _train_epoch
+    fa = self._forward_features(imgs_a).mean(dim=[2, 3])
+  File "/ssd_data/lixiang_data/YOLO_DA/finetune_da.py", line 128, in _forward_features
+    x = m(x)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/ssd_data/lixiang_data/YOLO_DA/yolo_source/ultralytics/nn/modules/block.py", line 312, in forward
+    return self.cv2(torch.cat(y, 1))
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/ssd_data/lixiang_data/YOLO_DA/yolo_source/ultralytics/nn/modules/conv.py", line 78, in forward
+    return self.act(self.bn(self.conv(x)))
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/activation.py", line 432, in forward
+    return F.silu(input, inplace=self.inplace)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/functional.py", line 2379, in silu
+    return torch._C._nn.silu_(input)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 128.00 MiB. GPU 0 has a total capacity of 23.69 GiB of which 11.31 MiB is free. Process 574341 has 18.41 GiB memory in use. Including non-PyTorch memory, this process has 5.24 GiB memory in use. Of the allocated memory 3.75 GiB is allocated by PyTorch, and 47.65 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+❌ best.pt 处理失败: CUDA out of memory. Tried to allocate 128.00 MiB. GPU 0 has a total capacity of 23.69 GiB of which 11.31 MiB is free. Process 574341 has 18.41 GiB memory in use. Including non-PyTorch memory, this process has 5.24 GiB memory in use. Of the allocated memory 3.75 GiB is allocated by PyTorch, and 47.65 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+📦 加载模型: epoch0
+Overriding model.yaml nc=80 with nc=1
+
+                   from  n    params  module                                       arguments                     
+  0                  -1  1       928  ultralytics.nn.modules.conv.Conv             [3, 32, 3, 2]                 
+  1                  -1  1     18560  ultralytics.nn.modules.conv.Conv             [32, 64, 3, 2]                
+  2                  -1  1     26080  ultralytics.nn.modules.block.C3k2            [64, 128, 1, False, 0.25]     
+  3                  -1  1    147712  ultralytics.nn.modules.conv.Conv             [128, 128, 3, 2]              
+  4                  -1  1    103360  ultralytics.nn.modules.block.C3k2            [128, 256, 1, False, 0.25]    
+  5                  -1  1    590336  ultralytics.nn.modules.conv.Conv             [256, 256, 3, 2]              
+  6                  -1  1    346112  ultralytics.nn.modules.block.C3k2            [256, 256, 1, True]           
+  7                  -1  1   1180672  ultralytics.nn.modules.conv.Conv             [256, 512, 3, 2]              
+  8                  -1  1   1380352  ultralytics.nn.modules.block.C3k2            [512, 512, 1, True]           
+  9                  -1  1    656896  ultralytics.nn.modules.block.SPPF            [512, 512, 5, 3, True]        
+ 10                  -1  1    990976  ultralytics.nn.modules.block.C2PSA           [512, 512, 1]                 
+ 11                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, 'nearest']          
+ 12             [-1, 6]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 13                  -1  1    477184  ultralytics.nn.modules.block.C3k2            [768, 256, 1, True]           
+ 14                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, 'nearest']          
+ 15             [-1, 4]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 16                  -1  1    136192  ultralytics.nn.modules.block.C3k2            [512, 128, 1, True]           
+ 17                  -1  1    147712  ultralytics.nn.modules.conv.Conv             [128, 128, 3, 2]              
+ 18            [-1, 13]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 19                  -1  1    378880  ultralytics.nn.modules.block.C3k2            [384, 256, 1, True]           
+ 20                  -1  1    590336  ultralytics.nn.modules.conv.Conv             [256, 256, 3, 2]              
+ 21            [-1, 10]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 22                  -1  1   1843712  ultralytics.nn.modules.block.C3k2            [768, 512, 1, True, 0.5, True]
+ 23        [16, 19, 22]  1    932638  ultralytics.nn.modules.head.Detect           [1, 1, True, [128, 256, 512]] 
+YOLO26s-da summary: 260 layers, 9,948,638 parameters, 9,948,638 gradients, 22.5 GFLOPs
+
+  参数量: 9.9M, 层数: 24
+
+============================================================
+🚀 启动 Deep CORAL 域对齐微调
+============================================================
+  源域 (A): /ssd_data/lixiang_data/Datasets/VIS/all/images
+  目标域(B): /ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val
+  超参数: epochs=10, batch=8, lr=0.0001
+  域数据集加载: 15080 张图像 from /ssd_data/lixiang_data/Datasets/VIS/all/images
+  域数据集加载: 3111 张图像 from /ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val
+
+>>> 微调前基线评估 <<<
+
+--------------------------------------------------
+📊 正在执行域特征分布量化评估...
+   ➤ 协方差距离 (CORAL Loss): 232183.4542
+   ➤ 特征中心距 (L1 Mean Gap): 0.2094
+   ➤ 域A特征统计: Mean=0.2660, Std=0.5709
+   ➤ 域B特征统计: Mean=0.3021, Std=0.7184
+--------------------------------------------------
+
+
+>>> 开始迭代训练 <<<
+  Training:   0%|          | 0/388 [00:00<?, ?it/s]                                                   Traceback (most recent call last):
+  File "/ssd_data/lixiang_data/YOLO_DA/finetune_da.py", line 342, in main
+    tuner.fine_tune(args.domain_A, args.domain_B, args.output_dir,
+  File "/ssd_data/lixiang_data/YOLO_DA/finetune_da.py", line 269, in fine_tune
+    avg_loss, avg_coral, avg_l2, fa_u, fb_u = self._train_epoch(dl_a, dl_b, optim, coral_weight, l2_weight)
+  File "/ssd_data/lixiang_data/YOLO_DA/finetune_da.py", line 205, in _train_epoch
+    fa = self._forward_features(imgs_a).mean(dim=[2, 3])
+  File "/ssd_data/lixiang_data/YOLO_DA/finetune_da.py", line 128, in _forward_features
+    x = m(x)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/ssd_data/lixiang_data/YOLO_DA/yolo_source/ultralytics/nn/modules/block.py", line 312, in forward
+    return self.cv2(torch.cat(y, 1))
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/ssd_data/lixiang_data/YOLO_DA/yolo_source/ultralytics/nn/modules/conv.py", line 78, in forward
+    return self.act(self.bn(self.conv(x)))
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/activation.py", line 432, in forward
+    return F.silu(input, inplace=self.inplace)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/functional.py", line 2379, in silu
+    return torch._C._nn.silu_(input)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 128.00 MiB. GPU 0 has a total capacity of 23.69 GiB of which 11.31 MiB is free. Process 574341 has 18.41 GiB memory in use. Including non-PyTorch memory, this process has 5.24 GiB memory in use. Of the allocated memory 3.75 GiB is allocated by PyTorch, and 47.65 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+❌ epoch0.pt 处理失败: CUDA out of memory. Tried to allocate 128.00 MiB. GPU 0 has a total capacity of 23.69 GiB of which 11.31 MiB is free. Process 574341 has 18.41 GiB memory in use. Including non-PyTorch memory, this process has 5.24 GiB memory in use. Of the allocated memory 3.75 GiB is allocated by PyTorch, and 47.65 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+📦 加载模型: epoch10
+Overriding model.yaml nc=80 with nc=1
+
+                   from  n    params  module                                       arguments                     
+  0                  -1  1       928  ultralytics.nn.modules.conv.Conv             [3, 32, 3, 2]                 
+  1                  -1  1     18560  ultralytics.nn.modules.conv.Conv             [32, 64, 3, 2]                
+  2                  -1  1     26080  ultralytics.nn.modules.block.C3k2            [64, 128, 1, False, 0.25]     
+  3                  -1  1    147712  ultralytics.nn.modules.conv.Conv             [128, 128, 3, 2]              
+  4                  -1  1    103360  ultralytics.nn.modules.block.C3k2            [128, 256, 1, False, 0.25]    
+  5                  -1  1    590336  ultralytics.nn.modules.conv.Conv             [256, 256, 3, 2]              
+  6                  -1  1    346112  ultralytics.nn.modules.block.C3k2            [256, 256, 1, True]           
+  7                  -1  1   1180672  ultralytics.nn.modules.conv.Conv             [256, 512, 3, 2]              
+  8                  -1  1   1380352  ultralytics.nn.modules.block.C3k2            [512, 512, 1, True]           
+  9                  -1  1    656896  ultralytics.nn.modules.block.SPPF            [512, 512, 5, 3, True]        
+ 10                  -1  1    990976  ultralytics.nn.modules.block.C2PSA           [512, 512, 1]                 
+ 11                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, 'nearest']          
+ 12             [-1, 6]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 13                  -1  1    477184  ultralytics.nn.modules.block.C3k2            [768, 256, 1, True]           
+ 14                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, 'nearest']          
+ 15             [-1, 4]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 16                  -1  1    136192  ultralytics.nn.modules.block.C3k2            [512, 128, 1, True]           
+ 17                  -1  1    147712  ultralytics.nn.modules.conv.Conv             [128, 128, 3, 2]              
+ 18            [-1, 13]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 19                  -1  1    378880  ultralytics.nn.modules.block.C3k2            [384, 256, 1, True]           
+ 20                  -1  1    590336  ultralytics.nn.modules.conv.Conv             [256, 256, 3, 2]              
+ 21            [-1, 10]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 22                  -1  1   1843712  ultralytics.nn.modules.block.C3k2            [768, 512, 1, True, 0.5, True]
+ 23        [16, 19, 22]  1    932638  ultralytics.nn.modules.head.Detect           [1, 1, True, [128, 256, 512]] 
+YOLO26s-da summary: 260 layers, 9,948,638 parameters, 9,948,638 gradients, 22.5 GFLOPs
+
+  参数量: 9.9M, 层数: 24
+
+============================================================
+🚀 启动 Deep CORAL 域对齐微调
+============================================================
+  源域 (A): /ssd_data/lixiang_data/Datasets/VIS/all/images
+  目标域(B): /ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val
+  超参数: epochs=10, batch=8, lr=0.0001
+  域数据集加载: 15080 张图像 from /ssd_data/lixiang_data/Datasets/VIS/all/images
+  域数据集加载: 3111 张图像 from /ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val
+
+>>> 微调前基线评估 <<<
+
+--------------------------------------------------
+📊 正在执行域特征分布量化评估...
+   ➤ 协方差距离 (CORAL Loss): 186.5099
+   ➤ 特征中心距 (L1 Mean Gap): 0.1699
+   ➤ 域A特征统计: Mean=0.2040, Std=0.1954
+   ➤ 域B特征统计: Mean=0.2046, Std=0.1955
+--------------------------------------------------
+
+
+>>> 开始迭代训练 <<<
+  Training:   0%|          | 0/388 [00:00<?, ?it/s]                                                   Traceback (most recent call last):
+  File "/ssd_data/lixiang_data/YOLO_DA/finetune_da.py", line 342, in main
+    tuner.fine_tune(args.domain_A, args.domain_B, args.output_dir,
+  File "/ssd_data/lixiang_data/YOLO_DA/finetune_da.py", line 269, in fine_tune
+    avg_loss, avg_coral, avg_l2, fa_u, fb_u = self._train_epoch(dl_a, dl_b, optim, coral_weight, l2_weight)
+  File "/ssd_data/lixiang_data/YOLO_DA/finetune_da.py", line 205, in _train_epoch
+    fa = self._forward_features(imgs_a).mean(dim=[2, 3])
+  File "/ssd_data/lixiang_data/YOLO_DA/finetune_da.py", line 128, in _forward_features
+    x = m(x)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/ssd_data/lixiang_data/YOLO_DA/yolo_source/ultralytics/nn/modules/block.py", line 312, in forward
+    return self.cv2(torch.cat(y, 1))
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/ssd_data/lixiang_data/YOLO_DA/yolo_source/ultralytics/nn/modules/conv.py", line 78, in forward
+    return self.act(self.bn(self.conv(x)))
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/modules/activation.py", line 432, in forward
+    return F.silu(input, inplace=self.inplace)
+  File "/home/lixiang/miniconda3/envs/pytorch/lib/python3.9/site-packages/torch/nn/functional.py", line 2379, in silu
+    return torch._C._nn.silu_(input)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 128.00 MiB. GPU 0 has a total capacity of 23.69 GiB of which 11.31 MiB is free. Process 574341 has 18.41 GiB memory in use. Including non-PyTorch memory, this process has 5.24 GiB memory in use. Of the allocated memory 3.75 GiB is allocated by PyTorch, and 47.65 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+❌ epoch10.pt 处理失败: CUDA out of memory. Tried to allocate 128.00 MiB. GPU 0 has a total capacity of 23.69 GiB of which 11.31 MiB is free. Process 574341 has 18.41 GiB memory in use. Including non-PyTorch memory, this process has 5.24 GiB memory in use. Of the allocated memory 3.75 GiB is allocated by PyTorch, and 47.65 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+📦 加载模型: epoch20
+Overriding model.yaml nc=80 with nc=1
+
+                   from  n    params  module                                       arguments                     
+  0                  -1  1       928  ultralytics.nn.modules.conv.Conv             [3, 32, 3, 2]                 
+  1                  -1  1     18560  ultralytics.nn.modules.conv.Conv             [32, 64, 3, 2]                
+  2                  -1  1     26080  ultralytics.nn.modules.block.C3k2            [64, 128, 1, False, 0.25]     
+  3                  -1  1    147712  ultralytics.nn.modules.conv.Conv             [128, 128, 3, 2]              
+  4                  -1  1    103360  ultralytics.nn.modules.block.C3k2            [128, 256, 1, False, 0.25]    
+  5                  -1  1    590336  ultralytics.nn.modules.conv.Conv             [256, 256, 3, 2]              
+  6                  -1  1    346112  ultralytics.nn.modules.block.C3k2            [256, 256, 1, True]           
+  7                  -1  1   1180672  ultralytics.nn.modules.conv.Conv             [256, 512, 3, 2]              
+  8                  -1  1   1380352  ultralytics.nn.modules.block.C3k2            [512, 512, 1, True]           
+  9                  -1  1    656896  ultralytics.nn.modules.block.SPPF            [512, 512, 5, 3, True]        
+ 10                  -1  1    990976  ultralytics.nn.modules.block.C2PSA           [512, 512, 1]                 
+ 11                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, 'nearest']          
+ 12             [-1, 6]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 13                  -1  1    477184  ultralytics.nn.modules.block.C3k2            [768, 256, 1, True]           
+ 14                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, 'nearest']          
+ 15             [-1, 4]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 16                  -1  1    136192  ultralytics.nn.modules.block.C3k2            [512, 128, 1, True]           
+ 17                  -1  1    147712  ultralytics.nn.modules.conv.Conv             [128, 128, 3, 2]              
+ 18            [-1, 13]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 19                  -1  1    378880  ultralytics.nn.modules.block.C3k2            [384, 256, 1, True]           
+ 20                  -1  1    590336  ultralytics.nn.modules.conv.Conv             [256, 256, 3, 2]              
+ 21            [-1, 10]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 22                  -1  1   1843712  ultralytics.nn.modules.block.C3k2            [768, 512, 1, True, 0.5, True]
+ 23        [16, 19, 22]  1    932638  ultralytics.nn.modules.head.Detect           [1, 1, True, [128, 256, 512]] 
+YOLO26s-da summary: 260 layers, 9,948,638 parameters, 9,948,638 gradients, 22.5 GFLOPs
+
+  参数量: 9.9M, 层数: 24
+
+============================================================
+🚀 启动 Deep CORAL 域对齐微调
+============================================================
+  源域 (A): /ssd_data/lixiang_data/Datasets/VIS/all/images
+  目标域(B): /ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val
+  超参数: epochs=10, batch=8, lr=0.0001
+  域数据集加载: 15080 张图像 from /ssd_data/lixiang_data/Datasets/VIS/all/images
+  域数据集加载: 3111 张图像 from /ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val
+
+>>> 微调前基线评估 <<<
+
+--------------------------------------------------
+📊 正在执行域特征分布量化评估...
+   ➤ 协方差距离 (CORAL Loss): 91.2741
+   ➤ 特征中心距 (L1 Mean Gap): 0.1378
+   ➤ 域A特征统计: Mean=0.2204, Std=0.1817
+   ➤ 域B特征统计: Mean=0.2177, Std=0.1652
+--------------------------------------------------
+
+
+>>> 开始迭代训练 <<<
+  Training:   0%|          | 0/388 [00:00<?, ?it/s]
