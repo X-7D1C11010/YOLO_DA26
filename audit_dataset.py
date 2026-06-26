@@ -31,7 +31,10 @@ def resolve_entries(yaml_path: Path, split: str) -> tuple[dict, list[Path]]:
         if not item:
             continue
         path = Path(str(item))
-        entries.append(path if path.is_absolute() else (base / path).resolve())
+        # 不对 split 入口本身执行 resolve()。如果 images/train 是一个软链接目录，
+        # resolve() 会提前跳回原始数据集目录，后续 image_to_label() 将从原始 labels
+        # 反推标签路径，从而把已经重映射的单类数据误判为多类标签越界。
+        entries.append(path if path.is_absolute() else (base / path).absolute())
     return config, entries
 
 
@@ -43,7 +46,7 @@ def collect_images(entry: Path) -> list[Path]:
             if not value:
                 continue
             path = Path(value)
-            images.append(path if path.is_absolute() else (entry.parent / path).resolve())
+            images.append(path if path.is_absolute() else (entry.parent / path).absolute())
         return images
     if entry.is_file() and entry.suffix.lower() in IMAGE_SUFFIXES:
         return [entry]
@@ -180,7 +183,10 @@ def main():
             images = []
             for entry in entries:
                 images.extend(collect_images(entry))
-            images = list(dict.fromkeys(path.resolve() for path in images))
+            # 不对单张图像执行 resolve()：如果 aircraft 单类数据使用软链接复用原始 VIS 图像，
+            # resolve() 会跟随软链接回到 VIS/all/images，随后 image_to_label() 又会读到原始多类标签，
+            # 导致审计误报大量“类别超出 [0,0]”。这里仅按绝对路径去重，保留 YAML/目录结构中的逻辑路径。
+            images = list(dict.fromkeys(path if path.is_absolute() else path.resolve() for path in images))
             if args.max_images > 0:
                 images = images[: args.max_images]
             dataset_report["splits"][split] = audit_split(images, nc, args.hash)
