@@ -347,6 +347,9 @@ def save_overlay(
 ) -> None:
     """保存 GT/预测叠加图。"""
 
+    if not image_path.exists():
+        raise FileNotFoundError(f"无法保存 overlay，图像路径不存在：{image_path}")
+
     image = Image.open(image_path).convert("RGB")
     draw = ImageDraw.Draw(image)
 
@@ -426,6 +429,7 @@ def analyze(args: argparse.Namespace) -> Dict[str, Any]:
     gt_details: List[Dict[str, Any]] = []
     fp_details: List[Dict[str, Any]] = []
     label_errors: List[str] = []
+    result_path_warnings: List[Dict[str, str]] = []
     overlay_candidates: List[Tuple[float, Path, List[Dict[str, Any]], List[Dict[str, Any]], Dict[str, Any]]] = []
 
     print(f"开始预测与错误分析：图像数={len(images)}, imgsz={args.imgsz}, conf={args.conf}, match_iou={args.match_iou}")
@@ -441,8 +445,29 @@ def analyze(args: argparse.Namespace) -> Dict[str, Any]:
         verbose=False,
     )
 
-    for result in results:
-        image_path = Path(result.path).resolve()
+    processed = 0
+    for image_path, result in zip(images, results):
+        processed += 1
+        image_path = Path(image_path).resolve()
+        result_path = Path(str(getattr(result, "path", "")))
+        if result_path.name and result_path.name != image_path.name:
+            result_path_warnings.append(
+                {
+                    "yaml_image": str(image_path),
+                    "ultralytics_result_path": str(result_path),
+                    "reason": "预测结果路径文件名与 YAML 解析路径不一致，已优先使用 YAML 路径。",
+                }
+            )
+        elif str(result_path) not in {"", "."} and not result_path.is_absolute():
+            # Ultralytics 在部分版本中只返回相对文件名，例如 image170.jpg。
+            # 这种路径不能用于读标签或保存 overlay，因此这里只记录，不参与后续逻辑。
+            result_path_warnings.append(
+                {
+                    "yaml_image": str(image_path),
+                    "ultralytics_result_path": str(result_path),
+                    "reason": "预测结果路径为相对路径，已优先使用 YAML 解析出的绝对路径。",
+                }
+            )
         height, width = result.orig_shape
         gts, errors = read_gt(image_path, width, height, nc)
         label_errors.extend(errors[:20])
@@ -510,6 +535,15 @@ def analyze(args: argparse.Namespace) -> Dict[str, Any]:
         severity = row["fn"] * 2.0 + row["fp"] + row["duplicate_fp"] * 0.5
         overlay_candidates.append((severity, image_path, gt_records_all, pred_records_all, row))
 
+    if processed != len(images):
+        result_path_warnings.append(
+            {
+                "yaml_image": "",
+                "ultralytics_result_path": "",
+                "reason": f"预测结果数量({processed})与 YAML 图像数量({len(images)})不一致，请检查是否有图像读取失败。",
+            }
+        )
+
     total_tp = sum(row["tp"] for row in per_image)
     total_fp = sum(row["fp"] for row in per_image)
     total_fn = sum(row["fn"] for row in per_image)
@@ -556,6 +590,9 @@ def analyze(args: argparse.Namespace) -> Dict[str, Any]:
         "by_size": by_size,
         "label_error_count": len(label_errors),
         "label_error_examples": label_errors[:100],
+        "result_path_warning_count": len(result_path_warnings),
+        "result_path_warning_examples": result_path_warnings[:50],
+        "processed_result_count": processed,
         "top_fn_images": top_fn,
         "top_fp_images": top_fp,
         "top_duplicate_images": top_duplicate,
