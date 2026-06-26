@@ -80,7 +80,7 @@ def main():
                     half=args.half,
                     rect=True,
                     plots=True,
-                    project="runs/eval",
+                    project="runs/eval_26s",
                     name=f"{weight.stem}_imgsz{imgsz}",
                     exist_ok=True,
                 )
