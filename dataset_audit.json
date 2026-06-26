@@ -1,5 +1,359 @@
 {
   "datasets": {
+    "/ssd_data/lixiang_data/YOLO_DA/dataset_aircraft_da.yaml": {
+      "nc": 1,
+      "names": {
+        "0": "aircraft"
+      },
+      "splits": {
+        "train": {
+          "images": 23427,
+          "existing_images": 23427,
+          "domains": {
+            "optical": 1662,
+            "sar": 21765
+          },
+          "class_counts": {
+            "0": 87306,
+            "1": 21435,
+            "2": 81846,
+            "3": 698,
+            "4": 138,
+            "5": 73
+          },
+          "missing_label_count": 0,
+          "empty_label_count": 0,
+          "invalid_label_count": 104279,
+          "missing_label_examples": [],
+          "invalid_label_examples": [
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00008.txt:1 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00008.txt:2 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00008.txt:3 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00008.txt:4 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00008.txt:5 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00008.txt:6 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00008.txt:7 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00008.txt:8 类别 2 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00008.txt:9 类别 2 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00008.txt:10 类别 2 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00008.txt:11 类别 2 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00011.txt:1 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00011.txt:2 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00011.txt:3 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00011.txt:4 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00011.txt:5 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00015.txt:1 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00015.txt:2 类别 1 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00015.txt:3 类别 2 超出 [0,0]",
+            "/ssd_data/lixiang_data/Datasets/VIS/all/labels/DIOR_00020.txt:1 类别 1 超出 [0,0]"
+          ],
+          "box_area": {
+            "p10": 4.566507e-06,
+            "p50": 0.000452711131,
+            "p90": 0.019630427246,
+            "mean": 0.006006457309193059
+          },
+          "box_width_p50": 0.020412,
+          "box_height_p50": 0.02273,
+          "duplicate_hash_groups": [
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000001.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000405.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000002.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000406.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000003.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000407.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000006.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000410.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000010.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000414.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000015.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000419.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000016.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000420.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000017.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000421.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000018.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000422.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000021.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000425.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000023.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000427.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000024.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000428.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000025.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000429.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000026.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000430.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000028.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000432.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000029.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000433.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000030.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000434.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000032.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000436.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000036.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000440.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000038.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/train/000442.jpg"
+            ]
+          ]
+        },
+        "val": {
+          "images": 3111,
+          "existing_images": 3111,
+          "domains": {
+            "sar": 3111
+          },
+          "class_counts": {
+            "0": 12826
+          },
+          "missing_label_count": 0,
+          "empty_label_count": 0,
+          "invalid_label_count": 0,
+          "missing_label_examples": [],
+          "invalid_label_examples": [],
+          "box_area": {
+            "p10": 0.000479348902,
+            "p50": 0.005498668812,
+            "p90": 0.0283824731445,
+            "mean": 0.011050521981528536
+          },
+          "box_width_p50": 0.0762635,
+          "box_height_p50": 0.07232949999999999,
+          "duplicate_hash_groups": [
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/000046.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/000450.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/000068.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/000472.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/000865.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/003331.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/000900.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/003366.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/000998.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/003464.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/001005.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/003471.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/001060.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/003526.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/001083.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/003549.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/001123.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/003589.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/001194.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/003660.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/001481.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/003947.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/001667.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/004133.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/001971.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/004437.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/001977.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/004443.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/002004.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/004470.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/002097.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/004563.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/002212.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/004678.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/002366.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/004832.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/002486.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/004952.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/002590.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/val/005056.jpg"
+            ]
+          ]
+        },
+        "test": {
+          "images": 6218,
+          "existing_images": 6218,
+          "domains": {
+            "sar": 6218
+          },
+          "class_counts": {
+            "0": 25684
+          },
+          "missing_label_count": 0,
+          "empty_label_count": 0,
+          "invalid_label_count": 3,
+          "missing_label_examples": [],
+          "invalid_label_examples": [
+            "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/labels/test/007717.txt:71 坐标越界",
+            "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/labels/test/007736.txt:51 坐标越界",
+            "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/labels/test/007777.txt:1 坐标越界"
+          ],
+          "box_area": {
+            "p10": 0.00033626756799999996,
+            "p50": 0.0050008668305,
+            "p90": 0.028179083251999998,
+            "mean": 0.010668236488973018
+          },
+          "box_width_p50": 0.071667,
+          "box_height_p50": 0.06948850000000001,
+          "duplicate_hash_groups": [
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000022.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000426.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000035.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000439.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000050.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000454.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000066.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000470.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000096.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000500.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000157.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000561.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000255.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000659.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000324.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000728.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000820.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/003286.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000877.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/003343.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000895.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/003361.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/000914.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/003380.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/001021.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/003487.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/001028.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/003494.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/001043.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/003509.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/001049.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/003515.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/001062.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/003528.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/001104.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/003570.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/001129.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/003595.jpg"
+            ],
+            [
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/001145.jpg",
+              "/ssd_data/lixiang_data/Datasets/SAR_Aircraft_noMSAR_jpg_split/images/test/003611.jpg"
+            ]
+          ]
+        }
+      }
+    },
     "/ssd_data/lixiang_data/YOLO_DA/dataset_sar_only.yaml": {
       "nc": 1,
       "names": {
@@ -421,11 +775,317 @@
     }
   },
   "warnings": [
-    "配置不存在：/ssd_data/lixiang_data/YOLO_DA/dataset_aircraft_da.yaml",
+    "dataset_aircraft_da.yaml 训练集存在 104279 条非法标签。",
     "dataset_sar_only.yaml 训练集存在 5 条非法标签。",
     "检测到不同配置/划分间存在同名图像，请进一步排查数据泄漏。"
   ],
   "stem_overlaps": {
+    "dataset_aircraft_da.yaml:train <-> dataset_sar_only.yaml:train": [
+      "000001",
+      "000002",
+      "000003",
+      "000004",
+      "000005",
+      "000006",
+      "000008",
+      "000010",
+      "000012",
+      "000015",
+      "000016",
+      "000017",
+      "000018",
+      "000019",
+      "000020",
+      "000021",
+      "000023",
+      "000024",
+      "000025",
+      "000026",
+      "000027",
+      "000028",
+      "000029",
+      "000030",
+      "000032",
+      "000033",
+      "000036",
+      "000038",
+      "000039",
+      "000041",
+      "000042",
+      "000043",
+      "000044",
+      "000045",
+      "000047",
+      "000048",
+      "000049",
+      "000051",
+      "000052",
+      "000053",
+      "000055",
+      "000057",
+      "000059",
+      "000061",
+      "000062",
+      "000064",
+      "000065",
+      "000067",
+      "000069",
+      "000072",
+      "000073",
+      "000074",
+      "000075",
+      "000076",
+      "000078",
+      "000079",
+      "000080",
+      "000081",
+      "000085",
+      "000086",
+      "000087",
+      "000092",
+      "000093",
+      "000094",
+      "000095",
+      "000098",
+      "000099",
+      "000100",
+      "000101",
+      "000102",
+      "000103",
+      "000105",
+      "000106",
+      "000107",
+      "000108",
+      "000109",
+      "000110",
+      "000112",
+      "000113",
+      "000114",
+      "000115",
+      "000116",
+      "000117",
+      "000118",
+      "000119",
+      "000120",
+      "000121",
+      "000122",
+      "000123",
+      "000125",
+      "000126",
+      "000132",
+      "000133",
+      "000134",
+      "000135",
+      "000137",
+      "000139",
+      "000140",
+      "000141",
+      "000142"
+    ],
+    "dataset_aircraft_da.yaml:val <-> dataset_sar_only.yaml:val": [
+      "000007",
+      "000009",
+      "000013",
+      "000034",
+      "000046",
+      "000063",
+      "000068",
+      "000071",
+      "000077",
+      "000082",
+      "000088",
+      "000089",
+      "000090",
+      "000124",
+      "000129",
+      "000148",
+      "000149",
+      "000167",
+      "000179",
+      "000194",
+      "000195",
+      "000199",
+      "000208",
+      "000221",
+      "000223",
+      "000233",
+      "000234",
+      "000236",
+      "000241",
+      "000245",
+      "000300",
+      "000321",
+      "000329",
+      "000340",
+      "000362",
+      "000369",
+      "000383",
+      "000384",
+      "000386",
+      "000390",
+      "000395",
+      "000401",
+      "000409",
+      "000424",
+      "000431",
+      "000450",
+      "000455",
+      "000458",
+      "000472",
+      "000478",
+      "000479",
+      "000489",
+      "000516",
+      "000535",
+      "000546",
+      "000547",
+      "000558",
+      "000562",
+      "000569",
+      "000570",
+      "000630",
+      "000643",
+      "000678",
+      "000697",
+      "000713",
+      "000716",
+      "000738",
+      "000749",
+      "000752",
+      "000753",
+      "000779",
+      "000791",
+      "000807",
+      "000824",
+      "000833",
+      "000847",
+      "000849",
+      "000851",
+      "000864",
+      "000865",
+      "000889",
+      "000896",
+      "000900",
+      "000950",
+      "000968",
+      "000970",
+      "000981",
+      "000998",
+      "001005",
+      "001016",
+      "001019",
+      "001024",
+      "001025",
+      "001029",
+      "001034",
+      "001044",
+      "001046",
+      "001051",
+      "001060",
+      "001079"
+    ],
+    "dataset_aircraft_da.yaml:test <-> dataset_sar_only.yaml:test": [
+      "000011",
+      "000014",
+      "000022",
+      "000031",
+      "000035",
+      "000037",
+      "000040",
+      "000050",
+      "000054",
+      "000056",
+      "000058",
+      "000060",
+      "000066",
+      "000070",
+      "000083",
+      "000084",
+      "000091",
+      "000096",
+      "000097",
+      "000104",
+      "000111",
+      "000127",
+      "000128",
+      "000130",
+      "000131",
+      "000136",
+      "000138",
+      "000143",
+      "000147",
+      "000151",
+      "000153",
+      "000157",
+      "000160",
+      "000162",
+      "000166",
+      "000173",
+      "000176",
+      "000178",
+      "000180",
+      "000182",
+      "000183",
+      "000184",
+      "000190",
+      "000192",
+      "000215",
+      "000224",
+      "000227",
+      "000229",
+      "000235",
+      "000243",
+      "000247",
+      "000248",
+      "000255",
+      "000256",
+      "000266",
+      "000271",
+      "000277",
+      "000278",
+      "000283",
+      "000285",
+      "000287",
+      "000290",
+      "000296",
+      "000304",
+      "000310",
+      "000324",
+      "000325",
+      "000327",
+      "000338",
+      "000355",
+      "000356",
+      "000358",
+      "000366",
+      "000367",
+      "000373",
+      "000378",
+      "000387",
+      "000389",
+      "000391",
+      "000408",
+      "000412",
+      "000416",
+      "000417",
+      "000423",
+      "000426",
+      "000437",
+      "000438",
+      "000439",
+      "000454",
+      "000463",
+      "000465",
+      "000468",
+      "000470",
+      "000482",
+      "000484",
+      "000497",
+      "000500",
+      "000504",
+      "000511",
+      "000514"
+    ],
     "test.yaml:train <-> test.yaml:val": [
       "260_C-130_0004",
       "260_C-130_0005",

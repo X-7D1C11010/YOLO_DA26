@@ -1,0 +1,12 @@
+# 自动生成：光学 aircraft 单类 + SAR aircraft 单类 DA 训练配置。
+# VIS 光学标签已由 prepare_vis_aircraft_singleclass.py 重映射为 class 0。
+path: /ssd_data/lixiang_data/Datasets
+train:
+  - VIS_aircraft_singleclass/images/train
+  - SAR_Aircraft_noMSAR_jpg_split/images/train
+val: SAR_Aircraft_noMSAR_jpg_split/images/val
+test: SAR_Aircraft_noMSAR_jpg_split/images/test
+
+nc: 1
+names:
+  0: aircraft
