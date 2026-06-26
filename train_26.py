@@ -155,7 +155,7 @@ def build_parser() -> argparse.ArgumentParser:
     # 训练流程
     parser.add_argument("--epochs", type=_positive_int, default=120, help="训练轮数")
     parser.add_argument("--imgsz", type=_positive_int, default=1024, help="输入图像尺寸；24GB 显存主实验建议使用 1024")
-    parser.add_argument("--batch", type=_positive_int, default=24, help="batch size；24GB 显存 YOLO26s@1024 可先尝试 24，OOM 时降到 20 或 16")
+    parser.add_argument("--batch", type=_positive_int, default=16, help="batch size；24GB 显存 YOLO26s@1024 建议先用 16，稳定后再尝试 20")
     parser.add_argument("--device", default="0", help="训练设备，例如 0、0,1 或 cpu")
     parser.add_argument("--workers", type=int, default=4, help="数据加载线程数；24GB 单卡建议 4，CPU/内存紧张时降到 2")
     parser.add_argument("--project", default=str(ROOT / "runs" / "detect"), help="训练输出根目录")
@@ -203,7 +203,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--hsv-v", type=float, default=0.20, help="亮度扰动")
     parser.add_argument("--mosaic", type=float, default=0.0, help="Mosaic 概率；域对抗训练建议保持 0")
     parser.add_argument("--mixup", type=float, default=0.0, help="MixUp 概率；域对抗训练建议保持 0")
-    parser.add_argument("--multi-scale", type=float, default=0.10, help="多尺度训练幅度")
+    parser.add_argument("--multi-scale", type=float, default=0.0, help="多尺度训练幅度；1024 大尺度主实验建议先保持 0，稳定后再尝试 0.05")
     parser.add_argument("--no-amp", action="store_true", help="关闭自动混合精度 AMP")
 
     return parser
@@ -781,8 +781,8 @@ def _log_memory_plan(args: argparse.Namespace) -> None:
     elif args.max_vram_gb >= 20:
         if args.imgsz == 1024 and args.batch < 16:
             LOGGER.warning("24GB 显存下 imgsz=1024,batch=%d 可能偏保守；若显存长期低于 18GB，可尝试 batch=20 或 24。", args.batch)
-        if args.imgsz == 1024 and args.batch >= 24:
-            LOGGER.info("当前为 24GB 高显存配置，目标显存占用约 20~22GB；若 OOM，优先降 batch 到 20 或 16。")
+        if args.imgsz == 1024 and args.batch >= 20:
+            LOGGER.info("当前为 24GB 高显存配置；若出现 CUDA invalid argument/OOM，优先降 batch 到 16 并保持 --multi-scale 0。")
         if args.imgsz > 1024:
             LOGGER.warning("imgsz>1024 会明显增加显存和误检风险，建议仅作为消融实验。")
 

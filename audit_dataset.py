@@ -90,6 +90,8 @@ def audit_split(images: list[Path], nc: int, use_hash: bool) -> dict:
     box_areas: list[float] = []
     box_widths: list[float] = []
     box_heights: list[float] = []
+    instance_counts: list[int] = []
+    instance_examples: list[tuple[int, str]] = []
     missing_labels = []
     empty_labels = []
     invalid_labels = []
@@ -108,12 +110,17 @@ def audit_split(images: list[Path], nc: int, use_hash: bool) -> dict:
         label = image_to_label(image)
         if not label.exists():
             missing_labels.append(str(image))
+            instance_counts.append(0)
+            instance_examples.append((0, str(image)))
             continue
         lines = [line.strip() for line in label.read_text(encoding="utf-8", errors="replace").splitlines() if line.strip()]
         if not lines:
             empty_labels.append(str(label))
+            instance_counts.append(0)
+            instance_examples.append((0, str(image)))
             continue
 
+        image_instances = 0
         for line_number, line in enumerate(lines, 1):
             fields = line.split()
             if len(fields) < 5:
@@ -135,8 +142,15 @@ def audit_split(images: list[Path], nc: int, use_hash: bool) -> dict:
             box_widths.append(width)
             box_heights.append(height)
             box_areas.append(width * height)
+            image_instances += 1
+        instance_counts.append(image_instances)
+        instance_examples.append((image_instances, str(image)))
 
     duplicate_hash_groups = [paths for paths in hashes.values() if len(paths) > 1]
+    top_instance_examples = [
+        {"instances": count, "image": image}
+        for count, image in sorted(instance_examples, reverse=True)[:20]
+    ]
     return {
         "images": len(images),
         "existing_images": sum(path.exists() for path in images),
@@ -155,6 +169,15 @@ def audit_split(images: list[Path], nc: int, use_hash: bool) -> dict:
         },
         "box_width_p50": percentile(box_widths, 0.50),
         "box_height_p50": percentile(box_heights, 0.50),
+        "instances_per_image": {
+            "p50": percentile(instance_counts, 0.50),
+            "p90": percentile(instance_counts, 0.90),
+            "p95": percentile(instance_counts, 0.95),
+            "p99": percentile(instance_counts, 0.99),
+            "max": max(instance_counts) if instance_counts else None,
+            "mean": statistics.fmean(instance_counts) if instance_counts else None,
+        },
+        "top_instance_examples": top_instance_examples,
         "duplicate_hash_groups": duplicate_hash_groups[:20],
     }
 

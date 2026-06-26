@@ -313,9 +313,22 @@ class TaskAlignedAssigner(nn.Module):
 
         n_anchors = xy_centers.shape[0]
         bs, n_boxes, _ = gt_bboxes.shape
-        lt, rb = gt_bboxes.view(-1, 1, 4).chunk(2, 2)  # left-top, right-bottom
-        bbox_deltas = torch.cat((xy_centers[None] - lt, rb - xy_centers[None]), dim=2).view(bs, n_boxes, n_anchors, -1)
-        return bbox_deltas.amin(3).gt_(eps)
+        if n_boxes == 0:
+            return torch.zeros(bs, 0, n_anchors, dtype=torch.bool, device=gt_bboxes.device)
+
+        # 1024 大尺度 + 大 batch + 多目标图像时，原实现会一次性构造
+        # (bs, n_boxes, n_anchors, 4) 的大张量，容易在 CUDA driver 层报
+        # invalid argument。这里按 anchor 分块计算，降低峰值显存和单个
+        # CUDA kernel 的压力，输出结果与原实现保持一致。
+        lt, rb = gt_bboxes.view(bs, n_boxes, 1, 4).chunk(2, 3)  # left-top, right-bottom
+        max_chunk_elements = 64_000_000
+        chunk_size = max(1, min(n_anchors, max_chunk_elements // max(bs * n_boxes * 4, 1)))
+        masks = []
+        for start in range(0, n_anchors, chunk_size):
+            centers = xy_centers[start : start + chunk_size].view(1, 1, -1, 2)
+            bbox_deltas = torch.cat((centers - lt, rb - centers), dim=3)
+            masks.append(bbox_deltas.amin(3).gt_(eps))
+        return torch.cat(masks, dim=2)
 
     def select_highest_overlaps(self, mask_pos, overlaps, n_max_boxes, align_metric):
         """Select anchor boxes with highest IoU when assigned to multiple ground truths.
