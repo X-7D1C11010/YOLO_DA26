@@ -9,7 +9,7 @@
 3. 加载检测预训练权重，并显式迁移检测头中形状兼容的权重；
 4. 配置检测损失 + 域对抗损失、优化器、学习率、数据增强和保存策略；
 5. 注册中文训练日志回调，持续输出域对抗系数与域分类损失；
-6. 按 12GB 显存场景和当前独立集尺度实验提供保守默认训练参数，并在每轮结束后主动清理 CUDA 缓存。
+6. 按 24GB 显存场景提供 1024 尺度训练默认参数，并在每轮结束后主动清理 CUDA 缓存。
 
 说明：
     逐 batch 的前向、反向传播、损失汇总、EMA、验证和 checkpoint 保存由本项目
@@ -154,10 +154,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     # 训练流程
     parser.add_argument("--epochs", type=_positive_int, default=120, help="训练轮数")
-    parser.add_argument("--imgsz", type=_positive_int, default=704, help="输入图像尺寸；当前独立集建议优先使用 640 或 704")
-    parser.add_argument("--batch", type=_positive_int, default=4, help="batch size；12GB 显存建议 YOLO26s 使用 2~4")
+    parser.add_argument("--imgsz", type=_positive_int, default=1024, help="输入图像尺寸；24GB 显存主实验建议使用 1024")
+    parser.add_argument("--batch", type=_positive_int, default=24, help="batch size；24GB 显存 YOLO26s@1024 可先尝试 24，OOM 时降到 20 或 16")
     parser.add_argument("--device", default="0", help="训练设备，例如 0、0,1 或 cpu")
-    parser.add_argument("--workers", type=int, default=2, help="数据加载线程数；低显存/低内存机器建议 2")
+    parser.add_argument("--workers", type=int, default=4, help="数据加载线程数；24GB 单卡建议 4，CPU/内存紧张时降到 2")
     parser.add_argument("--project", default=str(ROOT / "runs" / "detect"), help="训练输出根目录")
     parser.add_argument("--name", default=None, help="本次训练名称；默认自动生成")
     parser.add_argument("--exist-ok", action="store_true", help="允许覆盖同名训练目录")
@@ -165,7 +165,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--patience", type=int, default=30, help="早停耐心轮数")
     parser.add_argument("--save-period", type=int, default=10, help="每隔多少轮额外保存一次 checkpoint")
     parser.add_argument("--verbose", action="store_true", help="输出更详细的调试日志")
-    parser.add_argument("--max-vram-gb", type=float, default=12.0, help="用于显存风险提示的可用显存估计值")
+    parser.add_argument("--max-vram-gb", type=float, default=24.0, help="用于显存风险提示的可用显存估计值")
     parser.set_defaults(clear_cache_each_epoch=True)
     parser.add_argument(
         "--clear-cache-each-epoch",
@@ -182,12 +182,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     # 优化器与损失
     parser.add_argument("--optimizer", choices=("AdamW", "Adam", "SGD"), default="AdamW", help="优化器")
-    parser.add_argument("--lr0", type=float, default=0.001, help="初始学习率")
+    parser.add_argument("--lr0", type=float, default=0.0007, help="初始学习率")
     parser.add_argument("--lrf", type=float, default=0.05, help="最终学习率比例")
     parser.add_argument("--weight-decay", type=float, default=5e-4, help="权重衰减")
     parser.add_argument("--warmup-epochs", type=float, default=5.0, help="学习率 warmup 轮数")
-    parser.add_argument("--nbs", type=_positive_int, default=16, help="名义 batch size；低显存训练建议 16")
-    parser.add_argument("--domain-weight", type=float, default=0.005, help="域对抗损失权重")
+    parser.add_argument("--nbs", type=_positive_int, default=64, help="名义 batch size；24GB 大 batch 训练建议 64")
+    parser.add_argument("--domain-weight", type=float, default=0.002, help="域对抗损失权重")
     parser.add_argument("--alpha-max", type=float, default=1.0, help="梯度反转层最大对抗系数")
 
     # 数据增强。默认关闭 Mosaic/MixUp，因为跨域拼接会破坏单张图像的域标签。
@@ -755,7 +755,7 @@ def _log_memory_plan(args: argparse.Namespace) -> None:
     """根据 12GB 显存约束输出训练参数建议与风险提示。"""
 
     LOGGER.info(
-        "低显存训练配置：size=%s，imgsz=%d，batch=%d，nbs=%d，workers=%d，AMP=%s，"
+        "训练显存配置：size=%s，imgsz=%d，batch=%d，nbs=%d，workers=%d，AMP=%s，"
         "每轮清理缓存=%s",
         args.size,
         args.imgsz,
@@ -778,6 +778,13 @@ def _log_memory_plan(args: argparse.Namespace) -> None:
             LOGGER.warning("12GB 显存下 imgsz>=768 且 batch>4 有 OOM 风险；建议 batch<=4。")
         elif args.imgsz <= 640:
             LOGGER.info("当前尺度较省显存；最新独立测试显示 640/704 比 1024/1280 更稳。")
+    elif args.max_vram_gb >= 20:
+        if args.imgsz == 1024 and args.batch < 16:
+            LOGGER.warning("24GB 显存下 imgsz=1024,batch=%d 可能偏保守；若显存长期低于 18GB，可尝试 batch=20 或 24。", args.batch)
+        if args.imgsz == 1024 and args.batch >= 24:
+            LOGGER.info("当前为 24GB 高显存配置，目标显存占用约 20~22GB；若 OOM，优先降 batch 到 20 或 16。")
+        if args.imgsz > 1024:
+            LOGGER.warning("imgsz>1024 会明显增加显存和误检风险，建议仅作为消融实验。")
 
     if args.batch <= 2 and args.domain_weight > 0:
         LOGGER.warning(

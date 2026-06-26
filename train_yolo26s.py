@@ -3,8 +3,8 @@
 该脚本用于建立必须保留的对照组。只有当 DA 模型稳定超过该基线时，
 才能说明域对抗确实有效。
 
-默认参数按约 12GB 可用显存和最新独立集尺度实验设置：
-imgsz=576、batch=4、workers=2、nbs=16。
+默认参数按约 24GB 可用显存设置：
+imgsz=1024、batch=24、workers=4、nbs=64，并在每轮结束后清理 CUDA 缓存。
 """
 
 from __future__ import annotations
@@ -54,15 +54,15 @@ def main():
     parser.add_argument("--data", default=str(ROOT / "dataset_sar_only.yaml"))
     parser.add_argument("--weights", default="yolo26s.pt")
     parser.add_argument("--epochs", type=int, default=120)
-    parser.add_argument("--imgsz", type=int, default=576)
-    parser.add_argument("--batch", type=int, default=4)
+    parser.add_argument("--imgsz", type=int, default=1024)
+    parser.add_argument("--batch", type=int, default=24)
     parser.add_argument("--device", default="0")
-    parser.add_argument("--workers", type=int, default=2)
-    parser.add_argument("--nbs", type=int, default=16)
+    parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--nbs", type=int, default=64)
     parser.add_argument("--project", default="runs/detect")
     parser.add_argument("--name", default="YOLO26s_SAR_baseline")
     parser.add_argument("--optimizer", choices=("AdamW", "Adam", "SGD"), default="AdamW")
-    parser.add_argument("--lr0", type=float, default=0.001)
+    parser.add_argument("--lr0", type=float, default=0.0007)
     parser.add_argument("--lrf", type=float, default=0.05)
     parser.add_argument("--patience", type=int, default=30)
     parser.add_argument("--save-period", type=int, default=10)
@@ -91,8 +91,10 @@ def main():
         args.nbs,
         args.clear_cache_each_epoch,
     )
-    if args.imgsz >= 768:
-        LOGGER.warning("最新尺度评测显示 SAR-only 在独立集上 512/576 优于 768/896；若只是建立基线，建议优先使用默认 576。")
+    if args.imgsz == 1024 and args.batch >= 24:
+        LOGGER.info("当前为 24GB 高显存配置，目标显存占用约 20~22GB；若 OOM，优先降 batch 到 20 或 16。")
+    elif args.imgsz == 1024 and args.batch < 16:
+        LOGGER.warning("24GB 显存下 imgsz=1024,batch=%d 可能偏保守；若显存长期低于 18GB，可尝试 batch=20 或 24。", args.batch)
     model.train(
         data=args.data,
         epochs=args.epochs,
