@@ -67,6 +67,7 @@ class EntryReport:
     image_count: int = 0
     examples: List[Path] = field(default_factory=list)
     domain: str = "未知域"
+    domain_counts: Dict[str, int] = field(default_factory=dict)
 
 
 @dataclass
@@ -80,6 +81,7 @@ class SplitReport:
     label_missing: int = 0
     label_empty: int = 0
     label_invalid: int = 0
+    domain_counts: Dict[str, int] = field(default_factory=dict)
 
     @property
     def missing_entries(self) -> List[EntryReport]:
@@ -236,6 +238,25 @@ def _guess_domain(path: Path) -> str:
     return "未知域"
 
 
+def _format_domain_counts(domain_counts: Dict[str, int]) -> str:
+    """把域计数字典格式化为中文日志。"""
+
+    if not domain_counts:
+        return "未知域"
+    return ", ".join(f"{domain}:{count}" for domain, count in sorted(domain_counts.items()))
+
+
+def _major_domain(domain_counts: Dict[str, int], fallback_path: Path) -> str:
+    """根据图像路径统计结果返回入口的主域说明。"""
+
+    known = {domain: count for domain, count in domain_counts.items() if domain != "未知域" and count > 0}
+    if len(known) >= 2:
+        return "混合域"
+    if len(known) == 1:
+        return next(iter(known))
+    return _guess_domain(fallback_path)
+
+
 def _resolve_yaml_root(data_file: Path, raw_root: Optional[str]) -> Path:
     """解析 YAML 中的 path 字段。"""
 
@@ -290,14 +311,15 @@ def _iter_images_from_txt(txt_path: Path) -> Iterable[Path]:
     return images
 
 
-def _scan_images(path: Path, sample_limit: int) -> Tuple[int, List[Path]]:
+def _scan_images(path: Path, sample_limit: int) -> Tuple[int, List[Path], Dict[str, int]]:
     """统计图像数量，并保留少量样例用于标签抽查。"""
 
     count = 0
     examples: List[Path] = []
+    domain_counts: Dict[str, int] = {}
 
     if not path.exists():
-        return count, examples
+        return count, examples, domain_counts
 
     if path.is_file() and path.suffix.lower() == ".txt":
         iterator = _iter_images_from_txt(path)
@@ -314,10 +336,12 @@ def _scan_images(path: Path, sample_limit: int) -> Tuple[int, List[Path]]:
 
     for image_path in iterator:
         count += 1
+        domain = _guess_domain(image_path)
+        domain_counts[domain] = domain_counts.get(domain, 0) + 1
         if len(examples) < sample_limit:
             examples.append(image_path)
 
-    return count, examples
+    return count, examples, domain_counts
 
 
 def _image_to_label_path(image_path: Path) -> Path:
@@ -380,10 +404,13 @@ def _inspect_split(
     entry_reports: List[EntryReport] = []
     examples_for_label_check: List[Path] = []
     total_images = 0
+    split_domain_counts: Dict[str, int] = {}
 
     for raw_entry in raw_entries:
         resolved = _resolve_split_entry(root, data_file, raw_entry)
-        count, examples = _scan_images(resolved, label_check_samples)
+        count, examples, domain_counts = _scan_images(resolved, label_check_samples)
+        for domain, domain_count in domain_counts.items():
+            split_domain_counts[domain] = split_domain_counts.get(domain, 0) + domain_count
         entry_reports.append(
             EntryReport(
                 raw=raw_entry,
@@ -391,7 +418,8 @@ def _inspect_split(
                 exists=resolved.exists(),
                 image_count=count,
                 examples=examples[:5],
-                domain=_guess_domain(resolved),
+                domain=_major_domain(domain_counts, resolved),
+                domain_counts=domain_counts,
             )
         )
         total_images += count
@@ -418,6 +446,7 @@ def _inspect_split(
         label_missing=label_missing,
         label_empty=label_empty,
         label_invalid=label_invalid,
+        domain_counts=split_domain_counts,
     )
 
 
@@ -503,11 +532,15 @@ def _class_zero_name(data: Dict[str, Any]) -> str:
 def _format_split_report(report: SplitReport) -> str:
     """把数据划分检查结果格式化为中文日志。"""
 
-    lines = [f"{report.name}: 图像数={report.image_count}, 路径数={len(report.entries)}"]
+    lines = [
+        f"{report.name}: 图像数={report.image_count}, 路径数={len(report.entries)}, "
+        f"域统计={_format_domain_counts(report.domain_counts)}"
+    ]
     for entry in report.entries:
         state = "存在" if entry.exists else "缺失"
         lines.append(
-            f"  - [{state}] {entry.raw} -> {entry.path} | 图像={entry.image_count} | 域={entry.domain}"
+            f"  - [{state}] {entry.raw} -> {entry.path} | 图像={entry.image_count} | "
+            f"域={entry.domain}({_format_domain_counts(entry.domain_counts)})"
         )
     if report.label_checked:
         lines.append(
@@ -607,11 +640,13 @@ def prepare_dataset(args: argparse.Namespace) -> Tuple[Path, Dict[str, Any], Dic
     if has_missing or has_empty:
         raise DataConfigError(_build_missing_data_message(data_file, root, critical_reports))
 
-    train_domains = {entry.domain for entry in reports["train"].entries}
+    train_domains = {domain for domain, count in reports["train"].domain_counts.items() if count > 0}
     if args.domain_weight > 0 and not {"光学源域", "SAR目标域"}.issubset(train_domains):
         LOGGER.warning(
             "训练集路径未同时识别到“光学源域”和“SAR目标域”。"
-            "请确认路径中包含 VIS/Optical/RGB 与 SAR 等域标识，否则域标签可能全部落到同一类。"
+            "请确认 train txt 内的图像路径包含 VIS/Optical/RGB 与 SAR 等域标识，"
+            "否则域标签可能全部落到同一类。当前域统计：%s",
+            _format_domain_counts(reports["train"].domain_counts),
         )
 
     label_problem_reports = [
@@ -870,6 +905,7 @@ def _write_run_manifest(args: argparse.Namespace, data_yaml: Path, reports: Dict
                 "缺失标签": report.label_missing,
                 "空标签": report.label_empty,
                 "异常标签": report.label_invalid,
+                "域统计": report.domain_counts,
                 "路径": [
                     {
                         "原始": entry.raw,
@@ -877,6 +913,7 @@ def _write_run_manifest(args: argparse.Namespace, data_yaml: Path, reports: Dict
                         "存在": entry.exists,
                         "图像数": entry.image_count,
                         "域": entry.domain,
+                        "域统计": entry.domain_counts,
                     }
                     for entry in report.entries
                 ],
