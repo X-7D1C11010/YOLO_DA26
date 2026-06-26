@@ -1,4 +1,9 @@
-"""统一、可追溯的模型评测脚本。"""
+"""统一、可追溯的模型评测脚本。
+
+本脚本用于在独立测试集上做多尺度评测。根据 2026-06-26 的尺度网格结果，
+当前项目在 512~704 区间明显优于 1024/1280，因此默认评测尺度改为
+512,576,640,704,768,896，避免继续把显存和时间花在已验证不稳定的大尺度上。
+"""
 
 from __future__ import annotations
 
@@ -44,14 +49,17 @@ def main():
     parser.add_argument("weights", nargs="+", help="权重文件、目录或 glob")
     parser.add_argument("--data", default=str(ROOT / "test.yaml"))
     parser.add_argument("--split", default="val", choices=("train", "val", "test"))
-    parser.add_argument("--imgsz", type=_parse_sizes, default=_parse_sizes("640,1024,1280"))
-    parser.add_argument("--batch", type=int, default=8)
+    parser.add_argument("--imgsz", type=_parse_sizes, default=_parse_sizes("512,576,640,704,768,896"))
+    parser.add_argument("--batch", type=int, default=4, help="评测 batch；12GB 显存建议 4")
     parser.add_argument("--device", default="0")
     parser.add_argument("--conf", type=float, default=0.001)
     parser.add_argument("--iou", type=float, default=0.7)
     parser.add_argument("--max-det", type=int, default=1000)
     parser.add_argument("--half", action="store_true")
-    parser.add_argument("--output", default=str(ROOT / "evaluation_results_26s.jsonl"))
+    parser.add_argument("--project", default=str(ROOT / "runs" / "detect" / "runs" / "eval"), help="评测可视化输出目录")
+    parser.add_argument("--name-prefix", default="", help="评测子目录前缀，例如 eval_26 或 eval_26s")
+    parser.add_argument("--exist-ok", action="store_true", help="允许覆盖同名评测可视化目录")
+    parser.add_argument("--output", default=str(ROOT / "evaluation_scale_grid.jsonl"))
     args = parser.parse_args()
 
     data_path = Path(args.data).expanduser()
@@ -61,6 +69,7 @@ def main():
     weights = _expand_weights(args.weights)
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    project_dir = Path(args.project)
 
     best = None
     with output_path.open("a", encoding="utf-8") as log_file:
@@ -68,6 +77,7 @@ def main():
             model = YOLO(str(weight))
             for imgsz in args.imgsz:
                 print(f"\n评测：{weight.name}，imgsz={imgsz}")
+                run_name = f"{args.name_prefix + '_' if args.name_prefix else ''}{weight.stem}_imgsz{imgsz}"
                 metrics = model.val(
                     data=str(data_path),
                     split=args.split,
@@ -80,10 +90,11 @@ def main():
                     half=args.half,
                     rect=True,
                     plots=True,
-                    project="runs/eval_26s",
-                    name=f"{weight.stem}_imgsz{imgsz}",
-                    exist_ok=True,
+                    project=str(project_dir),
+                    name=run_name,
+                    exist_ok=args.exist_ok,
                 )
+                save_dir = getattr(metrics, "save_dir", None)
                 record = {
                     "time": time.strftime("%Y-%m-%d %H:%M:%S"),
                     "weights": str(weight),
@@ -97,6 +108,9 @@ def main():
                     "map50_95": float(metrics.box.map),
                     "precision": float(getattr(metrics.box, "mp", 0.0)),
                     "recall": float(getattr(metrics.box, "mr", 0.0)),
+                    "project": str(project_dir.resolve()),
+                    "name": run_name,
+                    "save_dir": str(save_dir) if save_dir else "",
                 }
                 log_file.write(json.dumps(record, ensure_ascii=False) + "\n")
                 log_file.flush()

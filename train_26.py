@@ -9,7 +9,7 @@
 3. 加载检测预训练权重，并显式迁移检测头中形状兼容的权重；
 4. 配置检测损失 + 域对抗损失、优化器、学习率、数据增强和保存策略；
 5. 注册中文训练日志回调，持续输出域对抗系数与域分类损失；
-6. 按 12GB 显存场景提供保守默认训练参数，并在每轮结束后主动清理 CUDA 缓存。
+6. 按 12GB 显存场景和当前独立集尺度实验提供保守默认训练参数，并在每轮结束后主动清理 CUDA 缓存。
 
 说明：
     逐 batch 的前向、反向传播、损失汇总、EMA、验证和 checkpoint 保存由本项目
@@ -115,7 +115,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     # 数据配置
-    parser.add_argument("--data", default=str(ROOT / "dataset.yaml"), help="训练数据集 YAML 配置文件")
+    parser.add_argument("--data", default=str(ROOT / "dataset_aircraft_da.yaml"), help="训练数据集 YAML 配置文件")
     parser.add_argument(
         "--data-root",
         default=os.environ.get("YOLO_DA_DATA_ROOT"),
@@ -153,16 +153,16 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--fresh", action="store_true", help="完全随机初始化，不加载检测预训练权重")
 
     # 训练流程
-    parser.add_argument("--epochs", type=_positive_int, default=150, help="训练轮数")
-    parser.add_argument("--imgsz", type=_positive_int, default=768, help="输入图像尺寸；12GB 显存建议 640 或 768")
+    parser.add_argument("--epochs", type=_positive_int, default=120, help="训练轮数")
+    parser.add_argument("--imgsz", type=_positive_int, default=704, help="输入图像尺寸；当前独立集建议优先使用 640 或 704")
     parser.add_argument("--batch", type=_positive_int, default=4, help="batch size；12GB 显存建议 YOLO26s 使用 2~4")
     parser.add_argument("--device", default="0", help="训练设备，例如 0、0,1 或 cpu")
-    parser.add_argument("--workers", type=int, default=8, help="数据加载线程数；低显存/低内存机器建议 2")
+    parser.add_argument("--workers", type=int, default=2, help="数据加载线程数；低显存/低内存机器建议 2")
     parser.add_argument("--project", default=str(ROOT / "runs" / "detect"), help="训练输出根目录")
     parser.add_argument("--name", default=None, help="本次训练名称；默认自动生成")
     parser.add_argument("--exist-ok", action="store_true", help="允许覆盖同名训练目录")
     parser.add_argument("--seed", type=int, default=0, help="随机种子")
-    parser.add_argument("--patience", type=int, default=40, help="早停耐心轮数")
+    parser.add_argument("--patience", type=int, default=30, help="早停耐心轮数")
     parser.add_argument("--save-period", type=int, default=10, help="每隔多少轮额外保存一次 checkpoint")
     parser.add_argument("--verbose", action="store_true", help="输出更详细的调试日志")
     parser.add_argument("--max-vram-gb", type=float, default=12.0, help="用于显存风险提示的可用显存估计值")
@@ -182,28 +182,28 @@ def build_parser() -> argparse.ArgumentParser:
 
     # 优化器与损失
     parser.add_argument("--optimizer", choices=("AdamW", "Adam", "SGD"), default="AdamW", help="优化器")
-    parser.add_argument("--lr0", type=float, default=0.002, help="初始学习率")
+    parser.add_argument("--lr0", type=float, default=0.001, help="初始学习率")
     parser.add_argument("--lrf", type=float, default=0.05, help="最终学习率比例")
     parser.add_argument("--weight-decay", type=float, default=5e-4, help="权重衰减")
     parser.add_argument("--warmup-epochs", type=float, default=5.0, help="学习率 warmup 轮数")
     parser.add_argument("--nbs", type=_positive_int, default=16, help="名义 batch size；低显存训练建议 16")
-    parser.add_argument("--domain-weight", type=float, default=0.02, help="域对抗损失权重")
+    parser.add_argument("--domain-weight", type=float, default=0.005, help="域对抗损失权重")
     parser.add_argument("--alpha-max", type=float, default=1.0, help="梯度反转层最大对抗系数")
 
     # 数据增强。默认关闭 Mosaic/MixUp，因为跨域拼接会破坏单张图像的域标签。
     parser.add_argument("--degrees", type=float, default=10.0, help="随机旋转角度")
     parser.add_argument("--translate", type=float, default=0.08, help="随机平移比例")
     parser.add_argument("--scale-aug", type=float, default=0.30, help="随机缩放比例")
-    parser.add_argument("--shear", type=float, default=2.0, help="随机错切角度")
-    parser.add_argument("--perspective", type=float, default=0.0002, help="随机透视变换强度")
+    parser.add_argument("--shear", type=float, default=0.0, help="随机错切角度")
+    parser.add_argument("--perspective", type=float, default=0.0, help="随机透视变换强度")
     parser.add_argument("--flipud", type=float, default=0.5, help="上下翻转概率")
     parser.add_argument("--fliplr", type=float, default=0.5, help="左右翻转概率")
-    parser.add_argument("--hsv-h", type=float, default=0.01, help="色调扰动")
-    parser.add_argument("--hsv-s", type=float, default=0.20, help="饱和度扰动")
+    parser.add_argument("--hsv-h", type=float, default=0.0, help="色调扰动")
+    parser.add_argument("--hsv-s", type=float, default=0.05, help="饱和度扰动")
     parser.add_argument("--hsv-v", type=float, default=0.20, help="亮度扰动")
     parser.add_argument("--mosaic", type=float, default=0.0, help="Mosaic 概率；域对抗训练建议保持 0")
     parser.add_argument("--mixup", type=float, default=0.0, help="MixUp 概率；域对抗训练建议保持 0")
-    parser.add_argument("--multi-scale", type=float, default=0.15, help="多尺度训练幅度")
+    parser.add_argument("--multi-scale", type=float, default=0.10, help="多尺度训练幅度")
     parser.add_argument("--no-amp", action="store_true", help="关闭自动混合精度 AMP")
 
     return parser
@@ -773,11 +773,11 @@ def _log_memory_plan(args: argparse.Namespace) -> None:
         if args.size in {"m", "l", "x"}:
             LOGGER.warning("12GB 显存不建议直接训练 YOLO26%s；优先使用 size=s，必要时退到 size=n。", args.size)
         if args.imgsz >= 1024 and args.batch > 2:
-            LOGGER.warning("12GB 显存下 imgsz>=1024 且 batch>2 很容易 OOM；建议 imgsz=768,batch=4 或 imgsz=1024,batch=2。")
+            LOGGER.warning("12GB 显存下 imgsz>=1024 且 batch>2 很容易 OOM；当前独立集也不支持盲目增大到 1024/1280，建议优先 imgsz=640 或 704。")
         elif args.imgsz >= 768 and args.batch > 4:
             LOGGER.warning("12GB 显存下 imgsz>=768 且 batch>4 有 OOM 风险；建议 batch<=4。")
         elif args.imgsz <= 640:
-            LOGGER.warning("imgsz<=640 更省显存，但 SAR 小目标可能损失细节；若 mAP 受限，可尝试 768 或切片训练/推理。")
+            LOGGER.info("当前尺度较省显存；最新独立测试显示 640/704 比 1024/1280 更稳。")
 
     if args.batch <= 2 and args.domain_weight > 0:
         LOGGER.warning(

@@ -3,7 +3,8 @@
 该脚本用于建立必须保留的对照组。只有当 DA 模型稳定超过该基线时，
 才能说明域对抗确实有效。
 
-默认参数按约 12GB 可用显存设置：imgsz=768、batch=4、workers=2、nbs=16。
+默认参数按约 12GB 可用显存和最新独立集尺度实验设置：
+imgsz=576、batch=4、workers=2、nbs=16。
 """
 
 from __future__ import annotations
@@ -52,13 +53,22 @@ def main():
     parser = argparse.ArgumentParser(description="YOLO26s SAR 单域监督基线")
     parser.add_argument("--data", default=str(ROOT / "dataset_sar_only.yaml"))
     parser.add_argument("--weights", default="yolo26s.pt")
-    parser.add_argument("--epochs", type=int, default=150)
-    parser.add_argument("--imgsz", type=int, default=768)
+    parser.add_argument("--epochs", type=int, default=120)
+    parser.add_argument("--imgsz", type=int, default=576)
     parser.add_argument("--batch", type=int, default=4)
     parser.add_argument("--device", default="0")
     parser.add_argument("--workers", type=int, default=2)
     parser.add_argument("--nbs", type=int, default=16)
+    parser.add_argument("--project", default="runs/detect")
     parser.add_argument("--name", default="YOLO26s_SAR_baseline")
+    parser.add_argument("--optimizer", choices=("AdamW", "Adam", "SGD"), default="AdamW")
+    parser.add_argument("--lr0", type=float, default=0.001)
+    parser.add_argument("--lrf", type=float, default=0.05)
+    parser.add_argument("--patience", type=int, default=30)
+    parser.add_argument("--save-period", type=int, default=10)
+    parser.add_argument("--mosaic", type=float, default=0.25)
+    parser.add_argument("--close-mosaic", type=int, default=15)
+    parser.add_argument("--multi-scale", type=float, default=0.10)
     parser.set_defaults(clear_cache_each_epoch=True)
     parser.add_argument("--clear-cache-each-epoch", dest="clear_cache_each_epoch", action="store_true")
     parser.add_argument("--no-clear-cache-each-epoch", dest="clear_cache_each_epoch", action="store_false")
@@ -81,6 +91,8 @@ def main():
         args.nbs,
         args.clear_cache_each_epoch,
     )
+    if args.imgsz >= 768:
+        LOGGER.warning("最新尺度评测显示 SAR-only 在独立集上 512/576 优于 768/896；若只是建立基线，建议优先使用默认 576。")
     model.train(
         data=args.data,
         epochs=args.epochs,
@@ -88,14 +100,15 @@ def main():
         batch=args.batch,
         device=args.device,
         workers=args.workers,
-        project="runs/detect",
+        project=args.project,
         name=args.name,
-        optimizer="AdamW",
-        lr0=0.002,
-        lrf=0.05,
+        optimizer=args.optimizer,
+        lr0=args.lr0,
+        lrf=args.lrf,
         nbs=args.nbs,
         cos_lr=True,
-        patience=40,
+        patience=args.patience,
+        save_period=args.save_period,
         degrees=10,
         translate=0.08,
         scale=0.30,
@@ -104,8 +117,9 @@ def main():
         hsv_h=0.0,
         hsv_s=0.05,
         hsv_v=0.15,
-        mosaic=0.5,
-        close_mosaic=20,
+        mosaic=args.mosaic,
+        close_mosaic=args.close_mosaic,
+        multi_scale=args.multi_scale,
         cache=False,
         amp=True,
     )
