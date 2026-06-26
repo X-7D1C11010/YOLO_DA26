@@ -51,7 +51,7 @@ def main():
     parser.add_argument("--iou", type=float, default=0.7)
     parser.add_argument("--max-det", type=int, default=1000)
     parser.add_argument("--half", action="store_true")
-    parser.add_argument("--output", default=str(ROOT / "evaluation_results.jsonl"))
+    parser.add_argument("--output", default=str(ROOT / "evaluation_results_26s.jsonl"))
     args = parser.parse_args()
 
     data_path = Path(args.data).expanduser()
