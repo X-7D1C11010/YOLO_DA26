@@ -1,0 +1,8 @@
+# 由 make_balanced_da_dataset.py 生成：用于 optical/SAR 域均衡 DA 训练。
+path: /ssd_data/lixiang_data/Datasets
+train: /ssd_data/lixiang_data/YOLO_DA/runs/datasets/da_balanced/train_balanced.txt
+val: SAR_Aircraft_noMSAR_jpg_split/images/val
+test: SAR_Aircraft_noMSAR_jpg_split/images/test
+nc: 1
+names:
+  0: aircraft
