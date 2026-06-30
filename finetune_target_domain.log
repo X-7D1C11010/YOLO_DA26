@@ -1,0 +1,504 @@
+nohup: ignoring input
+2026-06-30 13:11:48 | INFO | 日志文件：/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/finetune_target_domain.log
+2026-06-30 13:11:48 | INFO | 待微调权重数：1
+2026-06-30 13:11:48 | INFO | 微调模式：labeled；训练尺度=768；batch=8；lr0=0.0002
+2026-06-30 13:11:48 | INFO | 处理权重：/ssd_data/lixiang_data/YOLO_DA/runs/detect/DA_bal_dw002_img1024_b24-3/weights/epoch30.pt
+2026-06-30 13:11:48 | INFO | 评估 before：epoch30.pt @ imgsz=512
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+YOLO26s-da summary (fused): 127 layers, 9,597,152 parameters, 0 gradients, 20.5 GFLOPs
+[34m[1mval: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 5790.6±613.2 MB/s, size: 661.6 KB)
+[K[34m[1mval: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test... 17 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 17/17 643.7it/s 0.0s
+[34m[1mval: [0mNew cache created: /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test.cache
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 40% ━━━━╸─────── 2/5 4.2it/s 0.1s<0.7s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 80% ━━━━━━━━━╸── 4/5 8.6it/s 0.2s<0.1s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 5/5 16.3it/s 0.3s
+                   all         17         91      0.509      0.297      0.334      0.136
+Speed: 0.8ms preprocess, 13.9ms inference, 0.0ms loss, 0.1ms postprocess per image
+Results saved to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled/eval/before_imgsz512[0m
+2026-06-30 13:11:53 | INFO | before @ 512：mAP50=0.3342，mAP50-95=0.1362，P=0.5089，R=0.2967
+2026-06-30 13:11:53 | INFO | 评估 before：epoch30.pt @ imgsz=576
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+YOLO26s-da summary (fused): 127 layers, 9,597,152 parameters, 0 gradients, 20.5 GFLOPs
+[34m[1mval: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 6215.3±456.3 MB/s, size: 751.8 KB)
+[K[34m[1mval: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test.cache... 17 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 17/17 5.1Mit/s 0.0s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 20% ━━────────── 1/5 2.8it/s 0.1s<1.4s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 60% ━━━━━━━───── 3/5 6.6it/s 0.2s<0.3s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 5/5 14.5it/s 0.3s
+                   all         17         91      0.429      0.451      0.381      0.158
+Speed: 2.3ms preprocess, 14.3ms inference, 0.0ms loss, 0.5ms postprocess per image
+Results saved to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled/eval/before_imgsz576[0m
+2026-06-30 13:11:55 | INFO | before @ 576：mAP50=0.3810，mAP50-95=0.1583，P=0.4295，R=0.4505
+2026-06-30 13:11:55 | INFO | 评估 before：epoch30.pt @ imgsz=640
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+YOLO26s-da summary (fused): 127 layers, 9,597,152 parameters, 0 gradients, 20.5 GFLOPs
+[34m[1mval: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 6539.6±401.9 MB/s, size: 786.4 KB)
+[K[34m[1mval: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test.cache... 17 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 17/17 5.9Mit/s 0.0s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 20% ━━────────── 1/5 2.3it/s 0.1s<1.7s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 60% ━━━━━━━───── 3/5 5.7it/s 0.3s<0.4s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 5/5 12.2it/s 0.4s
+                   all         17         91      0.479      0.418      0.405      0.158
+Speed: 1.7ms preprocess, 13.9ms inference, 0.0ms loss, 0.5ms postprocess per image
+Results saved to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled/eval/before_imgsz640[0m
+2026-06-30 13:11:58 | INFO | before @ 640：mAP50=0.4053，mAP50-95=0.1577，P=0.4793，R=0.4176
+2026-06-30 13:11:58 | INFO | 评估 before：epoch30.pt @ imgsz=704
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+YOLO26s-da summary (fused): 127 layers, 9,597,152 parameters, 0 gradients, 20.5 GFLOPs
+[34m[1mval: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 6273.9±711.7 MB/s, size: 721.7 KB)
+[K[34m[1mval: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test.cache... 17 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 17/17 5.1Mit/s 0.0s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 20% ━━────────── 1/5 2.5it/s 0.1s<1.6s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 60% ━━━━━━━───── 3/5 5.9it/s 0.3s<0.3s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 5/5 13.0it/s 0.4s
+                   all         17         91      0.553      0.418      0.393      0.154
+Speed: 2.3ms preprocess, 15.2ms inference, 0.0ms loss, 0.1ms postprocess per image
+Results saved to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled/eval/before_imgsz704[0m
+2026-06-30 13:12:00 | INFO | before @ 704：mAP50=0.3934，mAP50-95=0.1539，P=0.5527，R=0.4176
+2026-06-30 13:12:00 | INFO | 评估 before：epoch30.pt @ imgsz=768
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+YOLO26s-da summary (fused): 127 layers, 9,597,152 parameters, 0 gradients, 20.5 GFLOPs
+[34m[1mval: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 6358.1±614.1 MB/s, size: 666.4 KB)
+[K[34m[1mval: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test.cache... 17 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 17/17 5.5Mit/s 0.0s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 20% ━━────────── 1/5 2.4it/s 0.1s<1.7s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 40% ━━━━╸─────── 2/5 4.6it/s 0.2s<0.7s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 80% ━━━━━━━━━╸── 4/5 7.6it/s 0.4s<0.1s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 5/5 11.7it/s 0.4s
+                   all         17         91      0.492      0.429      0.362      0.135
+Speed: 3.6ms preprocess, 14.5ms inference, 0.0ms loss, 0.3ms postprocess per image
+Results saved to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled/eval/before_imgsz768[0m
+2026-06-30 13:12:03 | INFO | before @ 768：mAP50=0.3621，mAP50-95=0.1354，P=0.4921，R=0.4286
+2026-06-30 13:12:03 | INFO | 评估 before：epoch30.pt @ imgsz=1024
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+YOLO26s-da summary (fused): 127 layers, 9,597,152 parameters, 0 gradients, 20.5 GFLOPs
+[34m[1mval: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 6113.0±579.8 MB/s, size: 753.4 KB)
+[K[34m[1mval: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test.cache... 17 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 17/17 5.5Mit/s 0.0s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 20% ━━────────── 1/5 1.5it/s 0.2s<2.6s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 40% ━━━━╸─────── 2/5 3.8it/s 0.3s<0.8s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 60% ━━━━━━━───── 3/5 5.4it/s 0.4s<0.4s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 5/5 8.8it/s 0.6s
+                   all         17         91      0.223       0.33      0.148     0.0602
+Speed: 5.5ms preprocess, 17.0ms inference, 0.0ms loss, 0.1ms postprocess per image
+Results saved to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled/eval/before_imgsz1024[0m
+2026-06-30 13:12:05 | INFO | before @ 1024：mAP50=0.1476，mAP50-95=0.0602，P=0.2231，R=0.3297
+2026-06-30 13:12:05 | INFO | 开始有标注微调：weight=/ssd_data/lixiang_data/YOLO_DA/runs/detect/DA_bal_dw002_img1024_b24-3/weights/epoch30.pt，data=/ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/target_subset.yaml
+New https://pypi.org/project/ultralytics/8.4.83 available 😃 Update with 'pip install -U ultralytics'
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+[34m[1mengine/trainer: [0magnostic_nms=False, amp=True, angle=1.0, augment=False, auto_augment=randaugment, batch=8, bgr=0.0, box=7.5, cache=False, cfg=None, classes=None, close_mosaic=0, cls=0.5, cls_pw=0.0, compile=False, conf=None, copy_paste=0.0, copy_paste_mode=flip, cos_lr=True, cutmix=0.0, data=/ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/target_subset.yaml, degrees=3.0, deterministic=True, device=0, dfl=1.5, dnn=False, domain_weight=0.1, dropout=0.0, dynamic=False, embed=None, end2end=None, epochs=40, erasing=0.4, exist_ok=False, fliplr=0.5, flipud=0.5, format=torchscript, fraction=1.0, freeze=5, half=False, hsv_h=0.0, hsv_s=0.04, hsv_v=0.08, imgsz=768, int8=False, iou=0.7, keras=False, kobj=1.0, line_width=None, lr0=0.0002, lrf=0.05, mask_ratio=4, max_det=300, mixup=0.0, mode=train, model=/ssd_data/lixiang_data/YOLO_DA/runs/detect/DA_bal_dw002_img1024_b24-3/weights/epoch30.pt, momentum=0.937, mosaic=0.0, multi_scale=0.0, name=target20p_labeled_epoch30_labeled-2, nbs=64, nms=False, opset=None, optimize=False, optimizer=AdamW, overlap_mask=True, patience=12, perspective=0.0, plots=True, pose=12.0, pretrained=True, profile=False, project=/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune, rect=False, resume=False, retina_masks=False, rle=1.0, save=True, save_conf=False, save_crop=False, save_dir=/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2, save_frames=False, save_json=False, save_period=5, save_txt=False, scale=0.12, seed=0, shear=0.0, show=False, show_boxes=True, show_conf=True, show_labels=True, simplify=True, single_cls=False, source=None, split=val, stream_buffer=False, task=detect, time=None, tracker=botsort.yaml, translate=0.04, val=True, verbose=True, vid_stride=1, visualize=False, warmup_bias_lr=0.1, warmup_epochs=2.0, warmup_momentum=0.8, weight_decay=0.0005, workers=4, workspace=None
+
+                   from  n    params  module                                       arguments                     
+  0                  -1  1       928  ultralytics.nn.modules.conv.Conv             [3, 32, 3, 2]                 
+  1                  -1  1     18560  ultralytics.nn.modules.conv.Conv             [32, 64, 3, 2]                
+  2                  -1  1     26080  ultralytics.nn.modules.block.C3k2            [64, 128, 1, False, 0.25]     
+  3                  -1  1    147712  ultralytics.nn.modules.conv.Conv             [128, 128, 3, 2]              
+  4                  -1  1    103360  ultralytics.nn.modules.block.C3k2            [128, 256, 1, False, 0.25]    
+  5                  -1  1    590336  ultralytics.nn.modules.conv.Conv             [256, 256, 3, 2]              
+  6                  -1  1    346112  ultralytics.nn.modules.block.C3k2            [256, 256, 1, True]           
+  7                  -1  1   1180672  ultralytics.nn.modules.conv.Conv             [256, 512, 3, 2]              
+  8                  -1  1   1380352  ultralytics.nn.modules.block.C3k2            [512, 512, 1, True]           
+  9                  -1  1    656896  ultralytics.nn.modules.block.SPPF            [512, 512, 5, 3, True]        
+ 10                  -1  1    990976  ultralytics.nn.modules.block.C2PSA           [512, 512, 1]                 
+ 11                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, 'nearest']          
+ 12             [-1, 6]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 13                  -1  1    477184  ultralytics.nn.modules.block.C3k2            [768, 256, 1, True]           
+ 14                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, 'nearest']          
+ 15             [-1, 4]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 16                  -1  1    136192  ultralytics.nn.modules.block.C3k2            [512, 128, 1, True]           
+ 17                  -1  1    147712  ultralytics.nn.modules.conv.Conv             [128, 128, 3, 2]              
+ 18            [-1, 13]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 19                  -1  1    378880  ultralytics.nn.modules.block.C3k2            [384, 256, 1, True]           
+ 20                  -1  1    590336  ultralytics.nn.modules.conv.Conv             [256, 256, 3, 2]              
+ 21            [-1, 10]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 22                  -1  1   1843712  ultralytics.nn.modules.block.C3k2            [768, 512, 1, True, 0.5, True]
+ 23                  10  1    131585  ultralytics.nn.modules.block.DomainClassifier[512, 256]                    
+ 24        [16, 19, 22]  1    932638  ultralytics.nn.modules.head.Detect           [1, 1, True, [128, 256, 512]] 
+YOLO26s-da summary: 265 layers, 10,080,223 parameters, 10,080,223 gradients, 22.5 GFLOPs
+
+Transferred 712/712 items from pretrained weights
+Freezing layer 'model.0.conv.weight'
+Freezing layer 'model.0.bn.weight'
+Freezing layer 'model.0.bn.bias'
+Freezing layer 'model.1.conv.weight'
+Freezing layer 'model.1.bn.weight'
+Freezing layer 'model.1.bn.bias'
+Freezing layer 'model.2.cv1.conv.weight'
+Freezing layer 'model.2.cv1.bn.weight'
+Freezing layer 'model.2.cv1.bn.bias'
+Freezing layer 'model.2.cv2.conv.weight'
+Freezing layer 'model.2.cv2.bn.weight'
+Freezing layer 'model.2.cv2.bn.bias'
+Freezing layer 'model.2.m.0.cv1.conv.weight'
+Freezing layer 'model.2.m.0.cv1.bn.weight'
+Freezing layer 'model.2.m.0.cv1.bn.bias'
+Freezing layer 'model.2.m.0.cv2.conv.weight'
+Freezing layer 'model.2.m.0.cv2.bn.weight'
+Freezing layer 'model.2.m.0.cv2.bn.bias'
+Freezing layer 'model.3.conv.weight'
+Freezing layer 'model.3.bn.weight'
+Freezing layer 'model.3.bn.bias'
+Freezing layer 'model.4.cv1.conv.weight'
+Freezing layer 'model.4.cv1.bn.weight'
+Freezing layer 'model.4.cv1.bn.bias'
+Freezing layer 'model.4.cv2.conv.weight'
+Freezing layer 'model.4.cv2.bn.weight'
+Freezing layer 'model.4.cv2.bn.bias'
+Freezing layer 'model.4.m.0.cv1.conv.weight'
+Freezing layer 'model.4.m.0.cv1.bn.weight'
+Freezing layer 'model.4.m.0.cv1.bn.bias'
+Freezing layer 'model.4.m.0.cv2.conv.weight'
+Freezing layer 'model.4.m.0.cv2.bn.weight'
+Freezing layer 'model.4.m.0.cv2.bn.bias'
+[34m[1mAMP: [0mrunning Automatic Mixed Precision (AMP) checks...
+[34m[1mAMP: [0mchecks passed ✅
+[34m[1mtrain: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 1210.8±224.4 MB/s, size: 690.8 KB)
+[K[34m[1mtrain: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/train... 38 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 38/38 733.5it/s 0.1s
+[34m[1mtrain: [0mNew cache created: /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/train.cache
+[34m[1mval: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 1683.5±57.9 MB/s, size: 633.5 KB)
+[K[34m[1mval: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test.cache... 17 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 17/17 2.2Mit/s 0.0s
+[34m[1moptimizer:[0m AdamW(lr=0.0002, momentum=0.937) with parameter groups 114 weight(decay=0.0), 128 weight(decay=0.0005), 128 bias(decay=0.0)
+Plotting labels to /ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2/labels.jpg... 
+Image sizes 768 train, 768 val
+Using 4 dataloader workers
+Logging results to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2[0m
+Starting training for 40 epochs...
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K       1/40      2.06G      1.851      2.655   0.009752         52        768: 0% ──────────── 0/5  0.4s[K       1/40      2.12G      2.033      2.407    0.01258         28        768: 20% ━━────────── 1/5 2.6it/s 0.5s<1.5s[K       1/40      2.18G      1.958      2.622    0.01341         40        768: 40% ━━━━╸─────── 2/5 3.6it/s 0.7s<0.8s[K       1/40      2.18G      1.954       2.44    0.01302         38        768: 60% ━━━━━━━───── 3/5 5.1it/s 0.8s<0.4s[K       1/40      2.22G      1.971      2.428    0.01295         38        768: 80% ━━━━━━━━━╸── 4/5 4.9it/s 1.1s<0.2s[K       1/40      2.22G      1.971      2.428    0.01295         38        768: 100% ━━━━━━━━━━━━ 5/5 4.7it/s 1.1s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 50% ━━━━━━────── 1/2 2.6it/s 0.1s<0.4s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 9.1it/s 0.2s
+                   all         17         91      0.583      0.495      0.498      0.217
+2026-06-30 13:12:11 | INFO | 第 1 轮结束：fitness=0.21702，metrics/precision(B)=0.5827, metrics/recall(B)=0.4945, metrics/mAP50(B)=0.4979, metrics/mAP50-95(B)=0.2170, val/box_loss=1.9590, val/cls_loss=2.1999, val/dfl_loss=0.0134
+2026-06-30 13:12:11 | INFO | 第 1 轮：已清理 CUDA 缓存，reserved 2.24 -> 0.34 GB，allocated 0.25 -> 0.25 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K       2/40      2.16G      1.816      1.145    0.01234         32        768: 0% ──────────── 0/5  0.1s[K       2/40      2.21G        1.9      1.474     0.0133         52        768: 40% ━━━━╸─────── 2/5 3.1it/s 0.3s<1.0s[K       2/40      2.25G      1.907      1.528    0.01255         40        768: 80% ━━━━━━━━━╸── 4/5 5.5it/s 0.5s<0.2s[K       2/40      2.25G      1.907      1.528    0.01255         40        768: 100% ━━━━━━━━━━━━ 5/5 10.3it/s 0.5s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.4it/s 0.1s
+                   all         17         91      0.639      0.571      0.607      0.307
+2026-06-30 13:12:12 | INFO | 第 2 轮结束：fitness=0.30681，metrics/precision(B)=0.6386, metrics/recall(B)=0.5714, metrics/mAP50(B)=0.6069, metrics/mAP50-95(B)=0.3068, val/box_loss=1.8054, val/cls_loss=2.7486, val/dfl_loss=0.0122
+2026-06-30 13:12:13 | INFO | 第 2 轮：已清理 CUDA 缓存，reserved 2.25 -> 0.35 GB，allocated 0.25 -> 0.25 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K       3/40      2.23G      1.895      1.334    0.01189         43        768: 20% ━━────────── 1/5 1.7it/s 0.2s<2.4s[K       3/40      2.23G      1.695      1.107    0.01087         43        768: 60% ━━━━━━━───── 3/5 4.6it/s 0.4s<0.4s[K       3/40      2.25G      1.725       1.16    0.01092         31        768: 100% ━━━━━━━━━━━━ 5/5 11.9it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 19.5it/s 0.1s
+                   all         17         91      0.641      0.571      0.637      0.298
+2026-06-30 13:12:14 | INFO | 第 3 轮结束：fitness=0.29815，metrics/precision(B)=0.6410, metrics/recall(B)=0.5714, metrics/mAP50(B)=0.6375, metrics/mAP50-95(B)=0.2982, val/box_loss=1.7951, val/cls_loss=2.9736, val/dfl_loss=0.0120
+2026-06-30 13:12:14 | INFO | 第 3 轮：已清理 CUDA 缓存，reserved 2.26 -> 0.50 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K       4/40       2.2G      1.699      1.287   0.009943         39        768: 0% ──────────── 0/5  0.1s[K       4/40      2.21G       1.51     0.9812   0.009121         48        768: 40% ━━━━╸─────── 2/5 3.4it/s 0.3s<0.9s[K       4/40      2.25G      1.576      1.062   0.009676         35        768: 80% ━━━━━━━━━╸── 4/5 6.0it/s 0.4s<0.2s[K       4/40      2.25G      1.576      1.062   0.009676         35        768: 100% ━━━━━━━━━━━━ 5/5 11.1it/s 0.5s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.3it/s 0.1s
+                   all         17         91      0.652      0.593      0.627      0.245
+2026-06-30 13:12:15 | INFO | 第 4 轮结束：fitness=0.2454，metrics/precision(B)=0.6520, metrics/recall(B)=0.5934, metrics/mAP50(B)=0.6271, metrics/mAP50-95(B)=0.2454, val/box_loss=1.9409, val/cls_loss=2.8897, val/dfl_loss=0.0134
+2026-06-30 13:12:15 | INFO | 第 4 轮：已清理 CUDA 缓存，reserved 2.25 -> 0.34 GB，allocated 0.25 -> 0.25 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K       5/40      2.23G      1.535      1.102   0.009585         46        768: 20% ━━────────── 1/5 1.6it/s 0.2s<2.5s[K       5/40      2.25G      1.526      1.008   0.009192         47        768: 60% ━━━━━━━───── 3/5 5.3it/s 0.3s<0.4s[K       5/40      2.29G      1.569      1.031   0.009366         21        768: 100% ━━━━━━━━━━━━ 5/5 11.6it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.2it/s 0.1s
+                   all         17         91      0.583      0.615      0.616      0.263
+2026-06-30 13:12:16 | INFO | 第 5 轮结束：fitness=0.26276，metrics/precision(B)=0.5832, metrics/recall(B)=0.6154, metrics/mAP50(B)=0.6163, metrics/mAP50-95(B)=0.2628, val/box_loss=1.9188, val/cls_loss=2.6355, val/dfl_loss=0.0134
+2026-06-30 13:12:16 | INFO | 第 5 轮：已清理 CUDA 缓存，reserved 2.29 -> 0.36 GB，allocated 0.25 -> 0.25 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K       6/40      2.25G      1.432      1.037   0.007637         45        768: 20% ━━────────── 1/5 1.9it/s 0.2s<2.1s[K       6/40      2.25G      1.456      1.022   0.008364         39        768: 40% ━━━━╸─────── 2/5 4.3it/s 0.3s<0.7s[K       6/40      2.29G      1.477     0.9152   0.009464         22        768: 80% ━━━━━━━━━╸── 4/5 7.0it/s 0.4s<0.1s[K       6/40      2.29G      1.477     0.9152   0.009464         22        768: 100% ━━━━━━━━━━━━ 5/5 12.2it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.3it/s 0.1s
+                   all         17         91      0.597      0.626      0.658      0.293
+2026-06-30 13:12:17 | INFO | 第 6 轮结束：fitness=0.29273，metrics/precision(B)=0.5974, metrics/recall(B)=0.6264, metrics/mAP50(B)=0.6582, metrics/mAP50-95(B)=0.2927, val/box_loss=1.9391, val/cls_loss=2.3736, val/dfl_loss=0.0136
+2026-06-30 13:12:17 | INFO | 第 6 轮：已清理 CUDA 缓存，reserved 2.29 -> 0.40 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K       7/40       2.2G      1.518      1.027    0.01088         40        768: 0% ──────────── 0/5  0.1s[K       7/40      2.21G      1.414      1.003   0.009253         49        768: 40% ━━━━╸─────── 2/5 4.2it/s 0.3s<0.7s[K       7/40      2.23G      1.407      1.026   0.009022         33        768: 60% ━━━━━━━───── 3/5 5.9it/s 0.4s<0.3s[K       7/40      2.25G      1.474      1.055   0.008897         24        768: 100% ━━━━━━━━━━━━ 5/5 11.9it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 19.4it/s 0.1s
+                   all         17         91      0.547      0.677      0.678      0.339
+2026-06-30 13:12:18 | INFO | 第 7 轮结束：fitness=0.33857，metrics/precision(B)=0.5472, metrics/recall(B)=0.6772, metrics/mAP50(B)=0.6776, metrics/mAP50-95(B)=0.3386, val/box_loss=1.7706, val/cls_loss=1.9769, val/dfl_loss=0.0123
+2026-06-30 13:12:18 | INFO | 第 7 轮：已清理 CUDA 缓存，reserved 2.26 -> 0.51 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K       8/40      2.23G      1.401     0.8945   0.008277         45        768: 20% ━━────────── 1/5 1.9it/s 0.2s<2.1s[K       8/40      2.23G      1.418      1.072   0.007909         35        768: 40% ━━━━╸─────── 2/5 4.2it/s 0.3s<0.7s[K       8/40      2.27G      1.338     0.9954   0.008345         23        768: 80% ━━━━━━━━━╸── 4/5 7.2it/s 0.4s<0.1s[K       8/40      2.27G      1.338     0.9954   0.008345         23        768: 100% ━━━━━━━━━━━━ 5/5 12.4it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.2it/s 0.1s
+                   all         17         91      0.577       0.69      0.699      0.367
+2026-06-30 13:12:19 | INFO | 第 8 轮结束：fitness=0.36725，metrics/precision(B)=0.5773, metrics/recall(B)=0.6903, metrics/mAP50(B)=0.6994, metrics/mAP50-95(B)=0.3673, val/box_loss=1.6990, val/cls_loss=1.7528, val/dfl_loss=0.0117
+2026-06-30 13:12:19 | INFO | 第 8 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.40 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K       9/40      2.23G      1.348     0.8241   0.009146         31        768: 20% ━━────────── 1/5 1.6it/s 0.2s<2.5s[K       9/40      2.23G      1.386     0.9306   0.009053         38        768: 60% ━━━━━━━───── 3/5 5.3it/s 0.3s<0.4s[K       9/40      2.27G      1.425     0.9729   0.008918         29        768: 100% ━━━━━━━━━━━━ 5/5 12.5it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.1it/s 0.1s
+                   all         17         91      0.584      0.709      0.717      0.383
+2026-06-30 13:12:20 | INFO | 第 9 轮结束：fitness=0.3826，metrics/precision(B)=0.5837, metrics/recall(B)=0.7089, metrics/mAP50(B)=0.7173, metrics/mAP50-95(B)=0.3826, val/box_loss=1.6254, val/cls_loss=1.5985, val/dfl_loss=0.0110
+2026-06-30 13:12:20 | INFO | 第 9 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.46 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      10/40      2.21G      1.283     0.7503   0.006512         38        768: 0% ──────────── 0/5  0.1s[K      10/40      2.21G      1.495     0.9299   0.008816         43        768: 40% ━━━━╸─────── 2/5 4.2it/s 0.3s<0.7s[K      10/40      2.27G      1.439     0.9268   0.008806         28        768: 80% ━━━━━━━━━╸── 4/5 6.3it/s 0.4s<0.2s[K      10/40      2.27G      1.439     0.9268   0.008806         28        768: 100% ━━━━━━━━━━━━ 5/5 11.3it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.2it/s 0.1s
+                   all         17         91      0.624      0.703      0.746      0.402
+2026-06-30 13:12:21 | INFO | 第 10 轮结束：fitness=0.40192，metrics/precision(B)=0.6236, metrics/recall(B)=0.7033, metrics/mAP50(B)=0.7463, metrics/mAP50-95(B)=0.4019, val/box_loss=1.5360, val/cls_loss=1.4188, val/dfl_loss=0.0102
+2026-06-30 13:12:21 | INFO | 第 10 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.35 GB，allocated 0.25 -> 0.25 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      11/40      2.23G      1.377     0.8533    0.00851         42        768: 20% ━━────────── 1/5 1.9it/s 0.2s<2.1s[K      11/40      2.23G      1.408     0.8662   0.008589         36        768: 60% ━━━━━━━───── 3/5 5.4it/s 0.3s<0.4s[K      11/40      2.27G      1.405     0.8896   0.008691         21        768: 100% ━━━━━━━━━━━━ 5/5 12.5it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 19.4it/s 0.1s
+                   all         17         91      0.678      0.693      0.751      0.409
+2026-06-30 13:12:22 | INFO | 第 11 轮结束：fitness=0.40892，metrics/precision(B)=0.6777, metrics/recall(B)=0.6932, metrics/mAP50(B)=0.7511, metrics/mAP50-95(B)=0.4089, val/box_loss=1.5209, val/cls_loss=1.3813, val/dfl_loss=0.0100
+2026-06-30 13:12:23 | INFO | 第 11 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.34 GB，allocated 0.25 -> 0.25 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      12/40      2.23G      1.518     0.9043   0.008717         46        768: 20% ━━────────── 1/5 1.9it/s 0.2s<2.1s[K      12/40      2.25G      1.418     0.8719   0.008221         49        768: 60% ━━━━━━━───── 3/5 5.4it/s 0.3s<0.4s[K      12/40      2.29G      1.428     0.8519   0.008543         38        768: 100% ━━━━━━━━━━━━ 5/5 12.5it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.2it/s 0.1s
+                   all         17         91      0.648      0.727      0.764      0.417
+2026-06-30 13:12:24 | INFO | 第 12 轮结束：fitness=0.4171，metrics/precision(B)=0.6477, metrics/recall(B)=0.7272, metrics/mAP50(B)=0.7639, metrics/mAP50-95(B)=0.4171, val/box_loss=1.4835, val/cls_loss=1.3528, val/dfl_loss=0.0097
+2026-06-30 13:12:24 | INFO | 第 12 轮：已清理 CUDA 缓存，reserved 2.29 -> 0.34 GB，allocated 0.25 -> 0.25 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      13/40      2.23G      1.371     0.8153   0.007347         36        768: 20% ━━────────── 1/5 1.9it/s 0.2s<2.2s[K      13/40      2.23G      1.362     0.8482   0.008103         43        768: 60% ━━━━━━━───── 3/5 5.5it/s 0.3s<0.4s[K      13/40      2.27G       1.34     0.8287   0.008125         39        768: 100% ━━━━━━━━━━━━ 5/5 12.4it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.2it/s 0.1s
+                   all         17         91      0.669      0.736      0.767      0.423
+2026-06-30 13:12:25 | INFO | 第 13 轮结束：fitness=0.42259，metrics/precision(B)=0.6694, metrics/recall(B)=0.7363, metrics/mAP50(B)=0.7667, metrics/mAP50-95(B)=0.4226, val/box_loss=1.4950, val/cls_loss=1.3506, val/dfl_loss=0.0098
+2026-06-30 13:12:25 | INFO | 第 13 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.34 GB，allocated 0.25 -> 0.25 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      14/40      2.25G      1.301     0.8517   0.007645         53        768: 20% ━━────────── 1/5 1.9it/s 0.2s<2.1s[K      14/40      2.25G      1.343     0.8857   0.008241         39        768: 60% ━━━━━━━───── 3/5 5.5it/s 0.3s<0.4s[K      14/40      2.29G      1.327     0.8602   0.007994         31        768: 100% ━━━━━━━━━━━━ 5/5 13.0it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.2it/s 0.1s
+                   all         17         91      0.669      0.736      0.767      0.423
+2026-06-30 13:12:26 | INFO | 第 14 轮结束：fitness=0.42259，metrics/precision(B)=0.6694, metrics/recall(B)=0.7363, metrics/mAP50(B)=0.7667, metrics/mAP50-95(B)=0.4226, val/box_loss=1.4950, val/cls_loss=1.3506, val/dfl_loss=0.0098
+2026-06-30 13:12:26 | INFO | 第 14 轮：已清理 CUDA 缓存，reserved 2.29 -> 0.42 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      15/40       2.2G      1.347     0.9317    0.01193         30        768: 0% ──────────── 0/5  0.1s[K      15/40      2.21G      1.378     0.8914   0.009783         45        768: 40% ━━━━╸─────── 2/5 4.2it/s 0.3s<0.7s[K      15/40      2.27G      1.327     0.8538   0.008197         39        768: 80% ━━━━━━━━━╸── 4/5 7.3it/s 0.4s<0.1s[K      15/40      2.27G      1.327     0.8538   0.008197         39        768: 100% ━━━━━━━━━━━━ 5/5 12.8it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.4it/s 0.1s
+                   all         17         91      0.678      0.725      0.764      0.423
+2026-06-30 13:12:27 | INFO | 第 15 轮结束：fitness=0.42307，metrics/precision(B)=0.6783, metrics/recall(B)=0.7253, metrics/mAP50(B)=0.7635, metrics/mAP50-95(B)=0.4231, val/box_loss=1.4733, val/cls_loss=1.3369, val/dfl_loss=0.0096
+2026-06-30 13:12:27 | INFO | 第 15 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.46 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      16/40      2.23G      1.376     0.8389   0.006971         39        768: 20% ━━────────── 1/5 1.7it/s 0.2s<2.4s[K      16/40      2.23G      1.314      0.781   0.007258         43        768: 60% ━━━━━━━───── 3/5 5.4it/s 0.3s<0.4s[K      16/40      2.27G      1.332     0.8165   0.008101         19        768: 100% ━━━━━━━━━━━━ 5/5 12.8it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.2it/s 0.1s
+                   all         17         91      0.676      0.703      0.771      0.434
+2026-06-30 13:12:28 | INFO | 第 16 轮结束：fitness=0.43404，metrics/precision(B)=0.6759, metrics/recall(B)=0.7033, metrics/mAP50(B)=0.7708, metrics/mAP50-95(B)=0.4340, val/box_loss=1.4792, val/cls_loss=1.3100, val/dfl_loss=0.0096
+2026-06-30 13:12:28 | INFO | 第 16 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.42 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      17/40      2.25G      1.283     0.7496    0.00651         46        768: 20% ━━────────── 1/5 1.8it/s 0.2s<2.2s[K      17/40      2.25G      1.411     0.8727   0.008794         45        768: 60% ━━━━━━━───── 3/5 4.8it/s 0.3s<0.4s[K      17/40      2.27G      1.377     0.8594   0.008661         37        768: 100% ━━━━━━━━━━━━ 5/5 12.4it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.1it/s 0.1s
+                   all         17         91      0.692      0.747      0.769      0.436
+2026-06-30 13:12:29 | INFO | 第 17 轮结束：fitness=0.43565，metrics/precision(B)=0.6916, metrics/recall(B)=0.7472, metrics/mAP50(B)=0.7690, metrics/mAP50-95(B)=0.4356, val/box_loss=1.4885, val/cls_loss=1.3026, val/dfl_loss=0.0097
+2026-06-30 13:12:29 | INFO | 第 17 轮：已清理 CUDA 缓存，reserved 2.28 -> 0.45 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      18/40      2.23G      1.267     0.7046    0.00784         36        768: 20% ━━────────── 1/5 1.8it/s 0.2s<2.2s[K      18/40      2.25G      1.262     0.8105   0.006888         44        768: 60% ━━━━━━━───── 3/5 5.4it/s 0.3s<0.4s[K      18/40      2.29G      1.323     0.8022   0.008337         26        768: 100% ━━━━━━━━━━━━ 5/5 13.1it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.3it/s 0.1s
+                   all         17         91      0.692      0.747      0.769      0.436
+2026-06-30 13:12:30 | INFO | 第 18 轮结束：fitness=0.43565，metrics/precision(B)=0.6916, metrics/recall(B)=0.7472, metrics/mAP50(B)=0.7690, metrics/mAP50-95(B)=0.4356, val/box_loss=1.4885, val/cls_loss=1.3026, val/dfl_loss=0.0097
+2026-06-30 13:12:30 | INFO | 第 18 轮：已清理 CUDA 缓存，reserved 2.29 -> 0.47 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      19/40       2.2G      1.399     0.7515    0.01126         42        768: 0% ──────────── 0/5  0.1s[K      19/40      2.21G      1.361     0.8358   0.008789         30        768: 40% ━━━━╸─────── 2/5 4.2it/s 0.2s<0.7s[K      19/40      2.29G      1.344     0.8286   0.008188         22        768: 80% ━━━━━━━━━╸── 4/5 7.2it/s 0.4s<0.1s[K      19/40      2.29G      1.344     0.8286   0.008188         22        768: 100% ━━━━━━━━━━━━ 5/5 12.8it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 19.5it/s 0.1s
+                   all         17         91      0.686      0.769      0.774      0.447
+2026-06-30 13:12:31 | INFO | 第 19 轮结束：fitness=0.44669，metrics/precision(B)=0.6857, metrics/recall(B)=0.7692, metrics/mAP50(B)=0.7737, metrics/mAP50-95(B)=0.4467, val/box_loss=1.5072, val/cls_loss=1.2684, val/dfl_loss=0.0098
+2026-06-30 13:12:32 | INFO | 第 19 轮：已清理 CUDA 缓存，reserved 2.29 -> 0.46 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      20/40      2.23G      1.275     0.8278   0.008633         41        768: 20% ━━────────── 1/5 1.9it/s 0.2s<2.1s[K      20/40      2.25G      1.278     0.8072   0.007844         53        768: 60% ━━━━━━━───── 3/5 4.9it/s 0.3s<0.4s[K      20/40      2.27G      1.341     0.8601   0.007807         24        768: 100% ━━━━━━━━━━━━ 5/5 12.8it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.2it/s 0.1s
+                   all         17         91      0.701      0.758      0.773      0.447
+2026-06-30 13:12:33 | INFO | 第 20 轮结束：fitness=0.44693，metrics/precision(B)=0.7014, metrics/recall(B)=0.7582, metrics/mAP50(B)=0.7729, metrics/mAP50-95(B)=0.4469, val/box_loss=1.5034, val/cls_loss=1.2754, val/dfl_loss=0.0098
+2026-06-30 13:12:33 | INFO | 第 20 轮：已清理 CUDA 缓存，reserved 2.28 -> 0.48 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      21/40      2.23G      1.273     0.7203   0.007158         41        768: 20% ━━────────── 1/5 1.9it/s 0.2s<2.1s[K      21/40      2.23G      1.282     0.7284   0.007822         38        768: 60% ━━━━━━━───── 3/5 5.6it/s 0.3s<0.4s[K      21/40      2.27G      1.287     0.7602    0.00775         33        768: 100% ━━━━━━━━━━━━ 5/5 13.6it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.2it/s 0.1s
+                   all         17         91      0.701      0.758      0.773      0.447
+2026-06-30 13:12:34 | INFO | 第 21 轮结束：fitness=0.44693，metrics/precision(B)=0.7014, metrics/recall(B)=0.7582, metrics/mAP50(B)=0.7729, metrics/mAP50-95(B)=0.4469, val/box_loss=1.5034, val/cls_loss=1.2754, val/dfl_loss=0.0098
+2026-06-30 13:12:34 | INFO | 第 21 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.46 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      22/40      2.23G      1.171     0.7938   0.007529         28        768: 20% ━━────────── 1/5 1.6it/s 0.2s<2.5s[K      22/40      2.23G      1.246       0.79   0.007389         45        768: 60% ━━━━━━━───── 3/5 5.4it/s 0.3s<0.4s[K      22/40      2.27G      1.324     0.8245   0.008205         31        768: 100% ━━━━━━━━━━━━ 5/5 12.5it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.2it/s 0.1s
+                   all         17         91      0.692      0.739      0.776      0.449
+2026-06-30 13:12:35 | INFO | 第 22 轮结束：fitness=0.4491，metrics/precision(B)=0.6915, metrics/recall(B)=0.7390, metrics/mAP50(B)=0.7763, metrics/mAP50-95(B)=0.4491, val/box_loss=1.5058, val/cls_loss=1.2714, val/dfl_loss=0.0098
+2026-06-30 13:12:35 | INFO | 第 22 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.44 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      23/40      2.23G      1.242     0.7876   0.006446         48        768: 20% ━━────────── 1/5 1.9it/s 0.2s<2.1s[K      23/40      2.23G      1.312     0.7576   0.008505         34        768: 60% ━━━━━━━───── 3/5 5.6it/s 0.3s<0.4s[K      23/40      2.27G      1.351     0.8095   0.008225         39        768: 100% ━━━━━━━━━━━━ 5/5 12.7it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 19.5it/s 0.1s
+                   all         17         91      0.702       0.75      0.779      0.455
+2026-06-30 13:12:36 | INFO | 第 23 轮结束：fitness=0.4551，metrics/precision(B)=0.7017, metrics/recall(B)=0.7496, metrics/mAP50(B)=0.7791, metrics/mAP50-95(B)=0.4551, val/box_loss=1.5047, val/cls_loss=1.2313, val/dfl_loss=0.0099
+2026-06-30 13:12:36 | INFO | 第 23 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.34 GB，allocated 0.25 -> 0.25 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      24/40      2.23G      1.399     0.9351   0.009328         42        768: 20% ━━────────── 1/5 1.9it/s 0.2s<2.1s[K      24/40      2.23G      1.267     0.8588   0.007577         47        768: 60% ━━━━━━━───── 3/5 5.6it/s 0.3s<0.4s[K      24/40      2.27G      1.246     0.8152   0.007491         31        768: 100% ━━━━━━━━━━━━ 5/5 13.7it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.2it/s 0.1s
+                   all         17         91      0.702       0.75      0.779      0.455
+2026-06-30 13:12:37 | INFO | 第 24 轮结束：fitness=0.4551，metrics/precision(B)=0.7017, metrics/recall(B)=0.7496, metrics/mAP50(B)=0.7791, metrics/mAP50-95(B)=0.4551, val/box_loss=1.5047, val/cls_loss=1.2313, val/dfl_loss=0.0099
+2026-06-30 13:12:37 | INFO | 第 24 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.46 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      25/40      2.25G      1.356     0.8812   0.007342         60        768: 20% ━━────────── 1/5 2.0it/s 0.2s<2.0s[K      25/40      2.25G      1.363     0.8386   0.007403         46        768: 40% ━━━━╸─────── 2/5 4.2it/s 0.3s<0.7s[K      25/40      2.29G      1.319     0.8101   0.007861         37        768: 80% ━━━━━━━━━╸── 4/5 7.0it/s 0.4s<0.1s[K      25/40      2.29G      1.319     0.8101   0.007861         37        768: 100% ━━━━━━━━━━━━ 5/5 12.3it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.8it/s 0.1s
+                   all         17         91      0.702      0.753      0.781      0.459
+2026-06-30 13:12:38 | INFO | 第 25 轮结束：fitness=0.45852，metrics/precision(B)=0.7025, metrics/recall(B)=0.7525, metrics/mAP50(B)=0.7814, metrics/mAP50-95(B)=0.4585, val/box_loss=1.5188, val/cls_loss=1.2356, val/dfl_loss=0.0101
+2026-06-30 13:12:38 | INFO | 第 25 轮：已清理 CUDA 缓存，reserved 2.29 -> 0.42 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      26/40      2.25G      1.264     0.6455   0.007344         55        768: 20% ━━────────── 1/5 1.9it/s 0.2s<2.1s[K      26/40      2.25G       1.28     0.7964   0.007394         28        768: 60% ━━━━━━━───── 3/5 5.6it/s 0.3s<0.4s[K      26/40      2.29G      1.279     0.7815   0.007674         41        768: 100% ━━━━━━━━━━━━ 5/5 13.6it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.7it/s 0.1s
+                   all         17         91      0.702      0.753      0.781      0.459
+2026-06-30 13:12:39 | INFO | 第 26 轮结束：fitness=0.45852，metrics/precision(B)=0.7025, metrics/recall(B)=0.7525, metrics/mAP50(B)=0.7814, metrics/mAP50-95(B)=0.4585, val/box_loss=1.5188, val/cls_loss=1.2356, val/dfl_loss=0.0101
+2026-06-30 13:12:39 | INFO | 第 26 轮：已清理 CUDA 缓存，reserved 2.29 -> 0.40 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      27/40      2.21G      1.177     0.6309   0.006121         61        768: 0% ──────────── 0/5  0.1s[K      27/40      2.21G      1.331     0.9323   0.007093         28        768: 40% ━━━━╸─────── 2/5 4.3it/s 0.2s<0.7s[K      27/40      2.27G      1.311     0.8368   0.007814         33        768: 80% ━━━━━━━━━╸── 4/5 7.4it/s 0.4s<0.1s[K      27/40      2.27G      1.311     0.8368   0.007814         33        768: 100% ━━━━━━━━━━━━ 5/5 13.1it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.7it/s 0.1s
+                   all         17         91      0.692      0.765      0.776      0.455
+2026-06-30 13:12:40 | INFO | 第 27 轮结束：fitness=0.45476，metrics/precision(B)=0.6920, metrics/recall(B)=0.7653, metrics/mAP50(B)=0.7760, metrics/mAP50-95(B)=0.4548, val/box_loss=1.4985, val/cls_loss=1.2309, val/dfl_loss=0.0100
+2026-06-30 13:12:40 | INFO | 第 27 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.46 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      28/40      2.23G      1.266     0.5918   0.008257         35        768: 20% ━━────────── 1/5 2.0it/s 0.2s<2.0s[K      28/40      2.23G      1.283      0.745   0.007641         49        768: 60% ━━━━━━━───── 3/5 5.1it/s 0.3s<0.4s[K      28/40      2.25G      1.298     0.7317   0.007918         33        768: 100% ━━━━━━━━━━━━ 5/5 13.2it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.6it/s 0.1s
+                   all         17         91      0.699      0.758      0.782      0.459
+2026-06-30 13:12:41 | INFO | 第 28 轮结束：fitness=0.459，metrics/precision(B)=0.6990, metrics/recall(B)=0.7582, metrics/mAP50(B)=0.7823, metrics/mAP50-95(B)=0.4590, val/box_loss=1.5095, val/cls_loss=1.2637, val/dfl_loss=0.0099
+2026-06-30 13:12:41 | INFO | 第 28 轮：已清理 CUDA 缓存，reserved 2.26 -> 0.47 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      29/40      2.23G      1.316     0.7211   0.008273         30        768: 20% ━━────────── 1/5 2.0it/s 0.2s<2.0s[K      29/40      2.23G      1.327     0.7184   0.008514         40        768: 60% ━━━━━━━───── 3/5 5.7it/s 0.3s<0.4s[K      29/40      2.27G      1.325     0.8057   0.007927         45        768: 100% ━━━━━━━━━━━━ 5/5 13.9it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.7it/s 0.1s
+                   all         17         91      0.699      0.758      0.782      0.459
+2026-06-30 13:12:42 | INFO | 第 29 轮结束：fitness=0.459，metrics/precision(B)=0.6990, metrics/recall(B)=0.7582, metrics/mAP50(B)=0.7823, metrics/mAP50-95(B)=0.4590, val/box_loss=1.5095, val/cls_loss=1.2637, val/dfl_loss=0.0099
+2026-06-30 13:12:42 | INFO | 第 29 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.47 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      30/40      2.23G      1.243     0.8095    0.00762         34        768: 20% ━━────────── 1/5 1.7it/s 0.2s<2.4s[K      30/40      2.23G      1.264     0.8026   0.007752         45        768: 60% ━━━━━━━───── 3/5 5.5it/s 0.3s<0.4s[K      30/40      2.27G      1.263     0.8006   0.007376         47        768: 100% ━━━━━━━━━━━━ 5/5 13.0it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.8it/s 0.1s
+                   all         17         91      0.685      0.758      0.777      0.457
+2026-06-30 13:12:43 | INFO | 第 30 轮结束：fitness=0.45713，metrics/precision(B)=0.6854, metrics/recall(B)=0.7582, metrics/mAP50(B)=0.7767, metrics/mAP50-95(B)=0.4571, val/box_loss=1.5089, val/cls_loss=1.2392, val/dfl_loss=0.0100
+2026-06-30 13:12:43 | INFO | 第 30 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.48 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      31/40      2.25G      1.274     0.6046   0.007347         44        768: 20% ━━────────── 1/5 2.0it/s 0.2s<2.0s[K      31/40      2.25G      1.409     0.8576   0.008279         26        768: 60% ━━━━━━━───── 3/5 5.6it/s 0.3s<0.4s[K      31/40      2.29G      1.403     0.8454   0.008532         35        768: 100% ━━━━━━━━━━━━ 5/5 12.9it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.7it/s 0.1s
+                   all         17         91      0.693      0.769      0.777      0.456
+2026-06-30 13:12:44 | INFO | 第 31 轮结束：fitness=0.45613，metrics/precision(B)=0.6930, metrics/recall(B)=0.7690, metrics/mAP50(B)=0.7774, metrics/mAP50-95(B)=0.4561, val/box_loss=1.5196, val/cls_loss=1.2481, val/dfl_loss=0.0101
+2026-06-30 13:12:45 | INFO | 第 31 轮：已清理 CUDA 缓存，reserved 2.29 -> 0.35 GB，allocated 0.25 -> 0.25 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      32/40      2.23G      1.273     0.8417   0.007182         34        768: 20% ━━────────── 1/5 2.0it/s 0.2s<2.0s[K      32/40      2.23G      1.259     0.8699   0.007484         35        768: 60% ━━━━━━━───── 3/5 5.6it/s 0.3s<0.4s[K      32/40      2.27G      1.266     0.8285   0.007806         29        768: 100% ━━━━━━━━━━━━ 5/5 13.9it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.7it/s 0.1s
+                   all         17         91      0.693      0.769      0.777      0.456
+2026-06-30 13:12:45 | INFO | 第 32 轮结束：fitness=0.45613，metrics/precision(B)=0.6930, metrics/recall(B)=0.7690, metrics/mAP50(B)=0.7774, metrics/mAP50-95(B)=0.4561, val/box_loss=1.5196, val/cls_loss=1.2481, val/dfl_loss=0.0101
+2026-06-30 13:12:46 | INFO | 第 32 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.44 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      33/40      2.23G      1.357     0.8304   0.007639         35        768: 20% ━━────────── 1/5 2.0it/s 0.2s<2.0s[K      33/40      2.23G      1.324     0.8106   0.007806         38        768: 60% ━━━━━━━───── 3/5 5.1it/s 0.3s<0.4s[K      33/40      2.27G      1.273     0.7573   0.007482         26        768: 100% ━━━━━━━━━━━━ 5/5 13.1it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.6it/s 0.1s
+                   all         17         91      0.706      0.769      0.781      0.459
+2026-06-30 13:12:47 | INFO | 第 33 轮结束：fitness=0.45867，metrics/precision(B)=0.7060, metrics/recall(B)=0.7692, metrics/mAP50(B)=0.7812, metrics/mAP50-95(B)=0.4587, val/box_loss=1.5142, val/cls_loss=1.2311, val/dfl_loss=0.0101
+2026-06-30 13:12:47 | INFO | 第 33 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.42 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      34/40      2.25G      1.397     0.8201   0.007224         46        768: 20% ━━────────── 1/5 2.0it/s 0.2s<2.0s[K      34/40      2.25G      1.319     0.7765   0.007425         34        768: 60% ━━━━━━━───── 3/5 5.6it/s 0.3s<0.4s[K      34/40      2.29G      1.292     0.7302   0.007659         37        768: 100% ━━━━━━━━━━━━ 5/5 13.9it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.7it/s 0.1s
+                   all         17         91      0.706      0.769      0.781      0.459
+2026-06-30 13:12:48 | INFO | 第 34 轮结束：fitness=0.45867，metrics/precision(B)=0.7060, metrics/recall(B)=0.7692, metrics/mAP50(B)=0.7812, metrics/mAP50-95(B)=0.4587, val/box_loss=1.5142, val/cls_loss=1.2311, val/dfl_loss=0.0101
+2026-06-30 13:12:48 | INFO | 第 34 轮：已清理 CUDA 缓存，reserved 2.29 -> 0.40 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      35/40      2.21G      1.342       0.91   0.007573         46        768: 0% ──────────── 0/5  0.1s[K      35/40      2.21G      1.301     0.7668   0.008138         46        768: 40% ━━━━╸─────── 2/5 4.3it/s 0.2s<0.7s[K      35/40      2.27G      1.277     0.7679   0.007763         29        768: 80% ━━━━━━━━━╸── 4/5 7.4it/s 0.4s<0.1s[K      35/40      2.27G      1.277     0.7679   0.007763         29        768: 100% ━━━━━━━━━━━━ 5/5 13.1it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.5it/s 0.1s
+                   all         17         91      0.716      0.736       0.78      0.459
+2026-06-30 13:12:49 | INFO | 第 35 轮结束：fitness=0.4593，metrics/precision(B)=0.7165, metrics/recall(B)=0.7363, metrics/mAP50(B)=0.7797, metrics/mAP50-95(B)=0.4593, val/box_loss=1.4920, val/cls_loss=1.2520, val/dfl_loss=0.0099
+2026-06-30 13:12:49 | INFO | 第 35 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.44 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      36/40      2.23G      1.369     0.8606   0.006385         40        768: 20% ━━────────── 1/5 2.0it/s 0.2s<2.0s[K      36/40      2.23G      1.297      0.792   0.007475         39        768: 60% ━━━━━━━───── 3/5 5.1it/s 0.3s<0.4s[K      36/40      2.25G      1.273     0.7713   0.007594         27        768: 100% ━━━━━━━━━━━━ 5/5 13.1it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.6it/s 0.1s
+                   all         17         91       0.71      0.747      0.778      0.457
+2026-06-30 13:12:50 | INFO | 第 36 轮结束：fitness=0.45733，metrics/precision(B)=0.7101, metrics/recall(B)=0.7472, metrics/mAP50(B)=0.7785, metrics/mAP50-95(B)=0.4573, val/box_loss=1.5114, val/cls_loss=1.2407, val/dfl_loss=0.0100
+2026-06-30 13:12:50 | INFO | 第 36 轮：已清理 CUDA 缓存，reserved 2.26 -> 0.53 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      37/40      2.25G      1.286     0.8438   0.008197         52        768: 20% ━━────────── 1/5 2.0it/s 0.2s<2.0s[K      37/40      2.25G      1.279     0.7872   0.007862         36        768: 60% ━━━━━━━───── 3/5 5.5it/s 0.3s<0.4s[K      37/40      2.29G      1.262     0.7615   0.007515         29        768: 100% ━━━━━━━━━━━━ 5/5 13.3it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.7it/s 0.1s
+                   all         17         91       0.71      0.747      0.778      0.457
+2026-06-30 13:12:51 | INFO | 第 37 轮结束：fitness=0.45733，metrics/precision(B)=0.7101, metrics/recall(B)=0.7472, metrics/mAP50(B)=0.7785, metrics/mAP50-95(B)=0.4573, val/box_loss=1.5114, val/cls_loss=1.2407, val/dfl_loss=0.0100
+2026-06-30 13:12:51 | INFO | 第 37 轮：已清理 CUDA 缓存，reserved 2.29 -> 0.49 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      38/40      2.23G      1.147     0.7613   0.007307         36        768: 20% ━━────────── 1/5 1.7it/s 0.2s<2.4s[K      38/40      2.23G      1.232     0.7318   0.007441         35        768: 60% ━━━━━━━───── 3/5 5.5it/s 0.3s<0.4s[K      38/40      2.27G      1.256     0.7578   0.007395         46        768: 100% ━━━━━━━━━━━━ 5/5 13.0it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.5it/s 0.1s
+                   all         17         91      0.714      0.741      0.778      0.458
+2026-06-30 13:12:52 | INFO | 第 38 轮结束：fitness=0.45767，metrics/precision(B)=0.7142, metrics/recall(B)=0.7415, metrics/mAP50(B)=0.7782, metrics/mAP50-95(B)=0.4577, val/box_loss=1.5060, val/cls_loss=1.2433, val/dfl_loss=0.0100
+2026-06-30 13:12:52 | INFO | 第 38 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.44 GB，allocated 0.29 -> 0.29 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      39/40      2.23G      1.176     0.6949   0.006732         37        768: 20% ━━────────── 1/5 1.9it/s 0.2s<2.1s[K      39/40      2.23G      1.297     0.8688     0.0082         30        768: 60% ━━━━━━━───── 3/5 5.6it/s 0.3s<0.4s[K      39/40      2.27G      1.295      0.799   0.008038         57        768: 100% ━━━━━━━━━━━━ 5/5 12.8it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.6it/s 0.1s
+                   all         17         91      0.714      0.747       0.78       0.46
+2026-06-30 13:12:53 | INFO | 第 39 轮结束：fitness=0.4597，metrics/precision(B)=0.7137, metrics/recall(B)=0.7472, metrics/mAP50(B)=0.7802, metrics/mAP50-95(B)=0.4597, val/box_loss=1.5075, val/cls_loss=1.2389, val/dfl_loss=0.0100
+2026-06-30 13:12:53 | INFO | 第 39 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.32 GB，allocated 0.25 -> 0.25 GB
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+[K      40/40      2.23G      1.346     0.8956    0.00752         29        768: 20% ━━────────── 1/5 2.0it/s 0.2s<2.0s[K      40/40      2.23G      1.295     0.7821   0.007607         40        768: 60% ━━━━━━━───── 3/5 5.6it/s 0.3s<0.4s[K      40/40      2.27G      1.295     0.7695   0.007474         30        768: 100% ━━━━━━━━━━━━ 5/5 13.7it/s 0.4s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 20.4it/s 0.1s
+                   all         17         91      0.714      0.747       0.78       0.46
+2026-06-30 13:12:54 | INFO | 第 40 轮结束：fitness=0.4597，metrics/precision(B)=0.7137, metrics/recall(B)=0.7472, metrics/mAP50(B)=0.7802, metrics/mAP50-95(B)=0.4597, val/box_loss=1.5075, val/cls_loss=1.2389, val/dfl_loss=0.0100
+2026-06-30 13:12:54 | INFO | 第 40 轮：已清理 CUDA 缓存，reserved 2.27 -> 0.46 GB，allocated 0.29 -> 0.29 GB
+
+40 epochs completed in 0.012 hours.
+Optimizer stripped from /ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2/weights/last.pt, 20.6MB
+Optimizer stripped from /ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2/weights/best.pt, 20.6MB
+
+Validating /ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2/weights/best.pt...
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+YOLO26s-da summary (fused): 127 layers, 9,597,152 parameters, 0 gradients, 20.5 GFLOPs
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 25.3it/s 0.1s
+                   all         17         91      0.744      0.735      0.782      0.459
+Speed: 0.2ms preprocess, 2.3ms inference, 0.0ms loss, 0.1ms postprocess per image
+Results saved to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2[0m
+2026-06-30 13:12:57 | INFO | 第 40 轮结束：fitness=0.4597，metrics/precision(B)=0.7442, metrics/recall(B)=0.7353, metrics/mAP50(B)=0.7818, metrics/mAP50-95(B)=0.4593
+2026-06-30 13:12:57 | INFO | 第 40 轮：已清理 CUDA 缓存，reserved 1.21 -> 0.46 GB，allocated 0.29 -> 0.29 GB
+2026-06-30 13:12:58 | INFO | 评估 after：best.pt @ imgsz=512
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+YOLO26s-da summary (fused): 127 layers, 9,597,152 parameters, 0 gradients, 20.5 GFLOPs
+[34m[1mval: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 4782.6±2122.4 MB/s, size: 753.8 KB)
+[K[34m[1mval: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test.cache... 17 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 17/17 5.9Mit/s 0.0s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 40% ━━━━╸─────── 2/5 3.4it/s 0.2s<0.9s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 80% ━━━━━━━━━╸── 4/5 7.8it/s 0.3s<0.1s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 5/5 16.9it/s 0.3s
+                   all         17         91      0.787       0.57      0.679      0.356
+Speed: 1.9ms preprocess, 10.5ms inference, 0.0ms loss, 0.1ms postprocess per image
+Results saved to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2/eval/after_imgsz512[0m
+2026-06-30 13:13:00 | INFO | after @ 512：mAP50=0.6790，mAP50-95=0.3558，P=0.7874，R=0.5698
+2026-06-30 13:13:00 | INFO | 评估 after：best.pt @ imgsz=576
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+YOLO26s-da summary (fused): 127 layers, 9,597,152 parameters, 0 gradients, 20.5 GFLOPs
+[34m[1mval: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 5786.7±645.0 MB/s, size: 676.5 KB)
+[K[34m[1mval: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test.cache... 17 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 17/17 5.1Mit/s 0.0s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 40% ━━━━╸─────── 2/5 3.5it/s 0.2s<0.9s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 80% ━━━━━━━━━╸── 4/5 7.3it/s 0.3s<0.1s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 5/5 16.3it/s 0.3s
+                   all         17         91      0.681      0.681      0.725       0.41
+Speed: 1.9ms preprocess, 8.7ms inference, 0.1ms loss, 1.7ms postprocess per image
+Results saved to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2/eval/after_imgsz576[0m
+2026-06-30 13:13:02 | INFO | after @ 576：mAP50=0.7254，mAP50-95=0.4101，P=0.6813，R=0.6812
+2026-06-30 13:13:02 | INFO | 评估 after：best.pt @ imgsz=640
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+YOLO26s-da summary (fused): 127 layers, 9,597,152 parameters, 0 gradients, 20.5 GFLOPs
+[34m[1mval: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 5536.8±495.1 MB/s, size: 718.5 KB)
+[K[34m[1mval: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test.cache... 17 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 17/17 5.1Mit/s 0.0s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 40% ━━━━╸─────── 2/5 3.0it/s 0.2s<1.0s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 80% ━━━━━━━━━╸── 4/5 6.7it/s 0.3s<0.1s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 5/5 14.8it/s 0.3s
+                   all         17         91      0.737      0.709      0.764      0.445
+Speed: 2.6ms preprocess, 8.5ms inference, 0.0ms loss, 0.5ms postprocess per image
+Results saved to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2/eval/after_imgsz640[0m
+2026-06-30 13:13:05 | INFO | after @ 640：mAP50=0.7643，mAP50-95=0.4445，P=0.7372，R=0.7089
+2026-06-30 13:13:05 | INFO | 评估 after：best.pt @ imgsz=704
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+YOLO26s-da summary (fused): 127 layers, 9,597,152 parameters, 0 gradients, 20.5 GFLOPs
+[34m[1mval: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 5981.7±1665.3 MB/s, size: 748.5 KB)
+[K[34m[1mval: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test.cache... 17 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 17/17 7.1Mit/s 0.0s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 20% ━━────────── 1/5 2.9it/s 0.1s<1.4s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 40% ━━━━╸─────── 2/5 4.1it/s 0.2s<0.7s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 80% ━━━━━━━━━╸── 4/5 6.8it/s 0.4s<0.1s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 5/5 12.1it/s 0.4s
+                   all         17         91      0.721      0.769      0.774      0.447
+Speed: 5.4ms preprocess, 7.6ms inference, 0.0ms loss, 0.1ms postprocess per image
+Results saved to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2/eval/after_imgsz704[0m
+2026-06-30 13:13:07 | INFO | after @ 704：mAP50=0.7744，mAP50-95=0.4472，P=0.7215，R=0.7686
+2026-06-30 13:13:07 | INFO | 评估 after：best.pt @ imgsz=768
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+YOLO26s-da summary (fused): 127 layers, 9,597,152 parameters, 0 gradients, 20.5 GFLOPs
+[34m[1mval: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 6148.8±398.5 MB/s, size: 792.1 KB)
+[K[34m[1mval: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test.cache... 17 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 17/17 5.9Mit/s 0.0s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 20% ━━────────── 1/5 2.5it/s 0.1s<1.6s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 40% ━━━━╸─────── 2/5 3.8it/s 0.3s<0.8s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 60% ━━━━━━━───── 3/5 5.4it/s 0.4s<0.4s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 5/5 11.1it/s 0.5s
+                   all         17         91      0.711      0.747      0.781       0.46
+Speed: 4.1ms preprocess, 7.4ms inference, 0.0ms loss, 0.1ms postprocess per image
+Results saved to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2/eval/after_imgsz768[0m
+2026-06-30 13:13:10 | INFO | after @ 768：mAP50=0.7806，mAP50-95=0.4602，P=0.7114，R=0.7473
+2026-06-30 13:13:10 | INFO | 评估 after：best.pt @ imgsz=1024
+Ultralytics 8.4.39 🚀 Python-3.9.25 torch-2.6.0+cu118 CUDA:0 (NVIDIA GeForce RTX 3090, 24260MiB)
+YOLO26s-da summary (fused): 127 layers, 9,597,152 parameters, 0 gradients, 20.5 GFLOPs
+[34m[1mval: [0mFast image access ✅ (ping: 0.0±0.0 ms, read: 4308.2±1359.3 MB/s, size: 717.3 KB)
+[K[34m[1mval: [0mScanning /ssd_data/lixiang_data/YOLO_DA/runs/target_subsets/independent_20p_seed2026/labels/test.cache... 17 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 17/17 5.9Mit/s 0.0s
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 20% ━━────────── 1/5 2.4it/s 0.1s<1.6s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 40% ━━━━╸─────── 2/5 3.2it/s 0.3s<0.9s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 60% ━━━━━━━───── 3/5 4.1it/s 0.5s<0.5s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 5/5 8.5it/s 0.6s
+                   all         17         91      0.638      0.604      0.673      0.349
+Speed: 10.0ms preprocess, 7.4ms inference, 0.2ms loss, 0.7ms postprocess per image
+Results saved to [1m/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2/eval/after_imgsz1024[0m
+2026-06-30 13:13:12 | INFO | after @ 1024：mAP50=0.6730，mAP50-95=0.3494，P=0.6378，R=0.6044
+2026-06-30 13:13:13 | INFO | 微调完成：mode=labeled，best=/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/target20p_labeled_epoch30_labeled-2/weights/best.pt，after_best_map50=0.7805934070190897
+2026-06-30 13:13:13 | INFO | 有标注微调结束：已清理 CUDA 缓存，reserved 1.13 -> 0.12 GB，allocated 0.06 -> 0.06 GB
+2026-06-30 13:13:13 | INFO | 全部任务完成。汇总文件：/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/finetune_summary.jsonl
+2026-06-30 13:13:13 | INFO | 评估明细：/ssd_data/lixiang_data/YOLO_DA/runs/target_finetune/evaluation_records.jsonl
