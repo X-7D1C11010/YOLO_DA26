@@ -26,7 +26,7 @@ import os
 import shutil
 import sys
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
@@ -59,6 +59,8 @@ class TrainResult:
     last: Path
     before_best_map50: float | None
     after_best_map50: float | None
+    final_best_map50: float | None = None
+    final_best_record: dict[str, Any] | None = None
 
 
 def parse_sizes(value: str) -> list[int]:
@@ -145,6 +147,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--half", action="store_true", help="评估/伪标签预测使用 FP16")
     parser.add_argument("--skip-before-eval", action="store_true", help="跳过微调前评估以节省时间")
     parser.add_argument("--no-eval-plots", action="store_true", help="关闭评估 plots")
+    parser.add_argument("--flat-output", action="store_true", help="不按 labeled/unlabeled 子目录保存，保持旧版扁平输出结构")
+    parser.add_argument(
+        "--final-test-data",
+        nargs="*",
+        default=[],
+        help="微调完成后自动测试的 YAML，可传入 target_no_leak_test.yaml、target_strict_holdout.yaml 等多个文件",
+    )
+    parser.add_argument(
+        "--final-test-imgsz",
+        type=parse_sizes,
+        default=None,
+        help="微调完成后最终测试使用的尺度列表；默认复用 --eval-imgsz",
+    )
     parser.add_argument("--clear-cache-each-epoch", action="store_true", default=True, help=argparse.SUPPRESS)
     parser.add_argument("--no-clear-cache-each-epoch", dest="clear_cache_each_epoch", action="store_false", help="关闭每轮 CUDA 缓存清理")
     parser.add_argument("--stop-on-nan", action="store_true", help="检测到非有限 loss 时立即停止当前训练")
@@ -279,6 +294,12 @@ def safe_run_name(prefix: str, weight: Path, mode: str) -> str:
     return f"{prefix}_{stem}_{mode}"
 
 
+def mode_project_dir(project: Path, args: argparse.Namespace, mode: str) -> Path:
+    """返回当前微调模式的输出根目录。默认按 labeled/unlabeled 分目录保存。"""
+
+    return project if args.flat_output else project / mode
+
+
 def clear_cuda_cache(note: str) -> None:
     """主动清理 Python 与 CUDA 缓存。"""
 
@@ -374,6 +395,8 @@ def evaluate_grid(
     args: argparse.Namespace,
     run_dir: Path,
     stage: str,
+    sizes: list[int] | None = None,
+    output_subdir: str | Path = "eval",
 ) -> tuple[list[dict[str, Any]], float | None]:
     """多尺度评估，并返回记录与最佳 mAP50。"""
 
@@ -383,10 +406,12 @@ def evaluate_grid(
         raise FileNotFoundError(f"评估 YAML 不存在：{data_yaml}")
 
     records: list[dict[str, Any]] = []
-    eval_project = run_dir / "eval"
-    for imgsz in args.eval_imgsz:
+    eval_project = run_dir / output_subdir
+    for imgsz in (sizes or args.eval_imgsz):
         LOGGER.info("评估 %s：%s @ imgsz=%s", stage, weight.name, imgsz)
         record = val_once(weight, data_yaml, imgsz, args, eval_project, f"{stage}_imgsz{imgsz}")
+        record["stage"] = stage
+        record["run_dir"] = str(run_dir)
         records.append(record)
         LOGGER.info(
             "%s @ %s：mAP50=%.4f，mAP50-95=%.4f，P=%.4f，R=%.4f",
@@ -408,6 +433,17 @@ def write_jsonl(path: Path, records: list[dict[str, Any]]) -> None:
     with path.open("a", encoding="utf-8") as file:
         for record in records:
             file.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
+def with_context(records: list[dict[str, Any]], **context: Any) -> list[dict[str, Any]]:
+    """给评估记录补充模式、初始权重等上下文，便于后续跨实验对比。"""
+
+    enriched: list[dict[str, Any]] = []
+    for record in records:
+        item = dict(record)
+        item.update(context)
+        enriched.append(item)
+    return enriched
 
 
 def train_kwargs(args: argparse.Namespace, data_yaml: Path, project: Path, name: str) -> dict[str, Any]:
@@ -459,23 +495,30 @@ def train_labeled(weight: Path, args: argparse.Namespace, project: Path) -> Trai
         raise FileNotFoundError(f"有标注数据 YAML 不存在：{data_yaml}")
     eval_yaml = Path(args.eval_data).expanduser().resolve() if args.eval_data else data_yaml
     run_name = safe_run_name(args.name, weight, "labeled")
-    run_dir = project / run_name
+    output_project = mode_project_dir(project, args, "labeled")
+    run_dir = output_project / run_name
 
     before_records: list[dict[str, Any]] = []
     before_best = None
     if not args.skip_before_eval:
         before_records, before_best = evaluate_grid(weight, eval_yaml, args, run_dir, "before")
+        before_records = with_context(before_records, mode="labeled", initial_weight=str(weight))
         write_jsonl(project / "evaluation_records.jsonl", before_records)
+        if output_project != project:
+            write_jsonl(output_project / "evaluation_records.jsonl", before_records)
 
     LOGGER.info("开始有标注微调：weight=%s，data=%s", weight, data_yaml)
     model = YOLO(str(weight))
     register_monitor_callbacks(model, args)
-    results = model.train(**train_kwargs(args, data_yaml, project, run_name))
+    results = model.train(**train_kwargs(args, data_yaml, output_project, run_name))
     best = Path(results.save_dir) / "weights" / "best.pt"
     last = Path(results.save_dir) / "weights" / "last.pt"
 
     after_records, after_best = evaluate_grid(best, eval_yaml, args, Path(results.save_dir), "after")
+    after_records = with_context(after_records, mode="labeled", initial_weight=str(weight))
     write_jsonl(project / "evaluation_records.jsonl", after_records)
+    if output_project != project:
+        write_jsonl(output_project / "evaluation_records.jsonl", after_records)
     return TrainResult("labeled", weight, Path(results.save_dir), best, last, before_best, after_best)
 
 
@@ -657,14 +700,18 @@ def train_unlabeled(weight: Path, args: argparse.Namespace, project: Path) -> Tr
     target_images = collect_images(args.target_images) if args.target_images else infer_target_images_from_data(data_yaml)
     eval_yaml = Path(args.eval_data).expanduser().resolve() if args.eval_data else data_yaml
     run_name = safe_run_name(args.name, weight, "unlabeled")
-    run_dir = project / run_name
+    output_project = mode_project_dir(project, args, "unlabeled")
+    run_dir = output_project / run_name
     run_dir.mkdir(parents=True, exist_ok=True)
 
     before_records: list[dict[str, Any]] = []
     before_best = None
     if not args.skip_before_eval:
         before_records, before_best = evaluate_grid(weight, eval_yaml, args, run_dir, "before")
+        before_records = with_context(before_records, mode="unlabeled", initial_weight=str(weight))
         write_jsonl(project / "evaluation_records.jsonl", before_records)
+        if output_project != project:
+            write_jsonl(output_project / "evaluation_records.jsonl", before_records)
 
     pseudo_root = run_dir / "pseudo_dataset"
     pseudo_images, pseudo_stats = generate_pseudo_dataset(weight, target_images, pseudo_root, nc, args)
@@ -685,13 +732,74 @@ def train_unlabeled(weight: Path, args: argparse.Namespace, project: Path) -> Tr
     LOGGER.info("开始无标注伪标签微调：weight=%s，pseudo_yaml=%s", weight, generated_yaml)
     model = YOLO(str(weight))
     register_monitor_callbacks(model, args)
-    results = model.train(**train_kwargs(args, generated_yaml, project, run_name))
+    results = model.train(**train_kwargs(args, generated_yaml, output_project, run_name))
     best = Path(results.save_dir) / "weights" / "best.pt"
     last = Path(results.save_dir) / "weights" / "last.pt"
 
     after_records, after_best = evaluate_grid(best, eval_yaml, args, Path(results.save_dir), "after")
+    after_records = with_context(after_records, mode="unlabeled", initial_weight=str(weight), pseudo_yaml=str(generated_yaml))
     write_jsonl(project / "evaluation_records.jsonl", after_records)
+    if output_project != project:
+        write_jsonl(output_project / "evaluation_records.jsonl", after_records)
     return TrainResult("unlabeled", weight, Path(results.save_dir), best, last, before_best, after_best)
+
+
+def run_final_tests(result: TrainResult, args: argparse.Namespace, project: Path) -> TrainResult:
+    """微调完成后在指定最终测试集上自动评估，并把结果写入独立 JSONL。"""
+
+    if not args.final_test_data:
+        return result
+
+    final_sizes = args.final_test_imgsz or args.eval_imgsz
+    all_records: list[dict[str, Any]] = []
+    best_record: dict[str, Any] | None = None
+
+    for raw_data in args.final_test_data:
+        data_yaml = Path(raw_data).expanduser().resolve()
+        if not data_yaml.exists():
+            raise FileNotFoundError(f"最终测试 YAML 不存在：{data_yaml}")
+
+        stage = f"final_{data_yaml.stem}"
+        output_subdir = Path("final_test") / data_yaml.stem
+        LOGGER.info("开始最终测试：mode=%s，best=%s，data=%s", result.mode, result.best, data_yaml)
+        records, _ = evaluate_grid(
+            result.best,
+            data_yaml,
+            args,
+            result.run_dir,
+            stage,
+            sizes=final_sizes,
+            output_subdir=output_subdir,
+        )
+        records = with_context(
+            records,
+            mode=result.mode,
+            initial_weight=str(result.weight),
+            finetuned_best=str(result.best),
+            final_test_data=str(data_yaml),
+        )
+        all_records.extend(records)
+
+        for record in records:
+            if best_record is None or float(record.get("map50", -1.0)) > float(best_record.get("map50", -1.0)):
+                best_record = record
+
+    if all_records:
+        write_jsonl(project / "final_test_records.jsonl", all_records)
+        mode_records_path = result.run_dir.parent / "final_test_records.jsonl"
+        if mode_records_path.resolve() != (project / "final_test_records.jsonl").resolve():
+            write_jsonl(mode_records_path, all_records)
+
+    final_best = None if best_record is None else float(best_record["map50"])
+    if best_record is not None:
+        LOGGER.info(
+            "最终测试最佳结果：mode=%s，mAP50=%.4f，imgsz=%s，data=%s",
+            result.mode,
+            final_best,
+            best_record.get("imgsz"),
+            best_record.get("final_test_data"),
+        )
+    return replace(result, final_best_map50=final_best, final_best_record=best_record)
 
 
 def append_summary(project: Path, result: TrainResult, args: argparse.Namespace) -> None:
@@ -706,6 +814,9 @@ def append_summary(project: Path, result: TrainResult, args: argparse.Namespace)
         "last": str(result.last),
         "before_best_map50": result.before_best_map50,
         "after_best_map50": result.after_best_map50,
+        "final_best_map50": result.final_best_map50,
+        "final_best_imgsz": None if result.final_best_record is None else result.final_best_record.get("imgsz"),
+        "final_best_data": None if result.final_best_record is None else result.final_best_record.get("final_test_data"),
         "delta_map50": (
             None
             if result.before_best_map50 is None or result.after_best_map50 is None
@@ -719,7 +830,13 @@ def append_summary(project: Path, result: TrainResult, args: argparse.Namespace)
     }
     with (project / "finetune_summary.jsonl").open("a", encoding="utf-8") as file:
         file.write(json.dumps(record, ensure_ascii=False) + "\n")
-    LOGGER.info("微调完成：mode=%s，best=%s，after_best_map50=%s", result.mode, result.best, result.after_best_map50)
+    LOGGER.info(
+        "微调完成：mode=%s，best=%s，after_best_map50=%s，final_best_map50=%s",
+        result.mode,
+        result.best,
+        result.after_best_map50,
+        result.final_best_map50,
+    )
 
 
 def validate_args(args: argparse.Namespace) -> None:
@@ -737,6 +854,12 @@ def validate_args(args: argparse.Namespace) -> None:
         raise ValueError("--pseudo-conf 必须位于 [0, 1]")
     if not 0 < args.min_box_area < args.max_box_area <= 1:
         raise ValueError("伪标签面积阈值需满足 0 < min < max <= 1")
+    if args.final_test_imgsz is None:
+        args.final_test_imgsz = args.eval_imgsz
+    for raw_data in args.final_test_data:
+        data_yaml = Path(raw_data).expanduser()
+        if not data_yaml.exists():
+            raise FileNotFoundError(f"最终测试 YAML 不存在：{data_yaml}")
 
 
 def main() -> None:
@@ -755,15 +878,19 @@ def main() -> None:
         LOGGER.info("处理权重：%s", weight)
         if args.mode in {"labeled", "both"}:
             result = train_labeled(weight, args, project)
+            result = run_final_tests(result, args, project)
             append_summary(project, result, args)
             clear_cuda_cache("有标注微调结束")
         if args.mode in {"unlabeled", "both"}:
             result = train_unlabeled(weight, args, project)
+            result = run_final_tests(result, args, project)
             append_summary(project, result, args)
             clear_cuda_cache("无标注微调结束")
 
     LOGGER.info("全部任务完成。汇总文件：%s", project / "finetune_summary.jsonl")
     LOGGER.info("评估明细：%s", project / "evaluation_records.jsonl")
+    if args.final_test_data:
+        LOGGER.info("最终测试明细：%s", project / "final_test_records.jsonl")
 
 
 if __name__ == "__main__":

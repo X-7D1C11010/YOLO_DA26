@@ -141,7 +141,7 @@ python finetune_target_domain.py \
 普通无泄漏测试：
 
 ```bash
-python test.py runs/target_finetune/target20p_labeled_epoch30_labeled/weights/best.pt \
+python test.py runs/target_finetune/labeled/target20p_labeled_epoch30_labeled/weights/best.pt \
   --data runs/target_subsets/independent_20p_seed2026/target_no_leak_test.yaml \
   --imgsz 512,576,640,704,768,1024 \
   --output evaluation_target20p_no_leak.jsonl \
@@ -151,7 +151,7 @@ python test.py runs/target_finetune/target20p_labeled_epoch30_labeled/weights/be
 严格最终测试：
 
 ```bash
-python test.py runs/target_finetune/target20p_labeled_epoch30_labeled/weights/best.pt \
+python test.py runs/target_finetune/labeled/target20p_labeled_epoch30_labeled/weights/best.pt \
   --data runs/target_subsets/independent_20p_seed2026/target_strict_holdout.yaml \
   --imgsz 512,576,640,704,768,1024 \
   --output evaluation_target20p_strict_holdout.jsonl \
@@ -183,3 +183,74 @@ python finetune_target_domain.py --help
 ```
 
 确认无语法错误后，再执行正式抽样、微调和无泄漏测试。
+
+## 9. 当前流程文件盘点
+
+如果当前目录中文件较多，建议先运行流程盘点脚本，明确当前方法使用了哪些输入文件、训练脚本、模型权重、日志和评测结果：
+
+```bash
+python workflow_file_audit.py \
+  --root . \
+  --output-dir runs/workflow_audit
+```
+
+脚本会生成两类文件：
+
+- `runs/workflow_audit/workflow_files_*.json`：完整结构化报告，适合后续程序读取。
+- `runs/workflow_audit/workflow_files_*.md`：中文说明文档，适合人工查看当前流程地图。
+
+## 10. 有标注/无标注微调与自动最终测试
+
+新版 `finetune_target_domain.py` 默认会按微调模式分目录保存结果：
+
+```text
+runs/target_finetune/
+  labeled/
+    <实验名>_<初始权重名>_labeled/
+      weights/best.pt
+      weights/last.pt
+      eval/
+      final_test/
+  unlabeled/
+    <实验名>_<初始权重名>_unlabeled/
+      pseudo_dataset/
+      pseudo_train.yaml
+      weights/best.pt
+      weights/last.pt
+      eval/
+      final_test/
+  finetune_summary.jsonl
+  evaluation_records.jsonl
+  final_test_records.jsonl
+```
+
+若希望一次同时运行有标注和无标注微调，并在微调后直接测试严格 holdout，可使用：
+
+```bash
+python finetune_target_domain.py \
+  --mode both \
+  --weights /ssd_data/lixiang_data/YOLO_DA/runs/detect/DA_bal_dw002_img1024_b24-3/weights/epoch30.pt \
+  --data runs/target_subsets/independent_20p_seed2026/target_subset.yaml \
+  --target-images runs/target_subsets/independent_20p_seed2026/images/train \
+  --project runs/target_finetune \
+  --name target20p \
+  --epochs 40 \
+  --imgsz 768 \
+  --batch 8 \
+  --lr0 0.0002 \
+  --freeze 5 \
+  --patience 12 \
+  --save-period 5 \
+  --pseudo-conf 0.45 \
+  --overwrite-pseudo \
+  --final-test-data runs/target_subsets/independent_20p_seed2026/target_strict_holdout.yaml \
+  --final-test-imgsz 512,576,640,704,768,1024
+```
+
+说明：
+
+- `--mode labeled`：只进行有标注目标域小样本微调。
+- `--mode unlabeled`：只进行无标注伪标签自训练，`--target-images` 中的标签不会被读取。
+- `--mode both`：先跑有标注，再跑无标注，二者分别保存到 `labeled/` 和 `unlabeled/`。
+- `--final-test-data` 可以同时传入 `target_no_leak_test.yaml` 和 `target_strict_holdout.yaml`，脚本会把结果写入 `final_test_records.jsonl`。
+- 若需要保持旧版扁平输出目录，可额外加入 `--flat-output`。
