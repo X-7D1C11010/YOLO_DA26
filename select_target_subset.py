@@ -19,12 +19,20 @@ train/test 两个子集，并完整复制图像与可用标注到新的项目目
     output/
       images/train/*.jpg
       images/test/*.jpg
+      images/no_leak_test/*.jpg
+      images/strict_holdout/*.jpg
       labels/train/*.txt
       labels/test/*.txt
+      labels/no_leak_test/*.txt
+      labels/strict_holdout/*.txt
       target_subset.yaml
+      target_no_leak_test.yaml
+      target_strict_holdout.yaml
       manifest.json
       train_images.txt
       test_images.txt
+      no_leak_test_images.txt
+      strict_holdout_images.txt
 """
 
 from __future__ import annotations
@@ -95,6 +103,15 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--nc", type=int, help="覆盖 YAML 中的类别数")
     parser.add_argument("--name", default="aircraft", help="当 YAML 没有 names 时使用的类别名")
+    parser.add_argument(
+        "--final-test-mode",
+        choices=("none", "no-leak", "strict", "both"),
+        default="both",
+        help=(
+            "额外生成无泄漏测试集：no-leak=仅排除微调训练图像；"
+            "strict=排除全部抽样图像；both=两者都生成"
+        ),
+    )
     return parser.parse_args()
 
 
@@ -326,7 +343,40 @@ def write_yaml(output: Path, config: dict[str, Any], args: argparse.Namespace) -
     return yaml_path
 
 
-def write_lists(output: Path, train_rows: list[dict[str, str]], test_rows: list[dict[str, str]]) -> None:
+def write_eval_yaml(
+    output: Path,
+    config: dict[str, Any],
+    args: argparse.Namespace,
+    split_dir: str,
+    filename: str,
+    comment: str,
+) -> Path:
+    """写出只用于评估的无泄漏数据集 YAML。"""
+
+    names = _format_names(config, args.name)
+    nc = args.nc if args.nc is not None else int(config.get("nc") or len(names))
+    yaml_path = output / filename
+    lines = [
+        f"# {comment}",
+        f"path: {json.dumps(str(output.resolve()), ensure_ascii=False)}",
+        "train: images/train",
+        f"val: images/{split_dir}",
+        f"test: images/{split_dir}",
+        f"nc: {nc}",
+        "names:",
+    ]
+    for index, name in enumerate(names[:nc]):
+        lines.append(f"  {index}: {json.dumps(name, ensure_ascii=False)}")
+    yaml_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return yaml_path
+
+
+def write_lists(
+    output: Path,
+    train_rows: list[dict[str, str]],
+    test_rows: list[dict[str, str]],
+    extra_rows: dict[str, list[dict[str, str]]] | None = None,
+) -> None:
     """写出图像清单和 CSV 明细，便于复查。"""
 
     (output / "train_images.txt").write_text(
@@ -337,13 +387,22 @@ def write_lists(output: Path, train_rows: list[dict[str, str]], test_rows: list[
         "\n".join(row["target_image"] for row in test_rows) + "\n",
         encoding="utf-8",
     )
+    extra_rows = extra_rows or {}
+    for split_name, rows in extra_rows.items():
+        (output / f"{split_name}_images.txt").write_text(
+            "\n".join(row["target_image"] for row in rows) + ("\n" if rows else ""),
+            encoding="utf-8",
+        )
     with (output / "selection_detail.csv").open("w", encoding="utf-8", newline="") as file:
         writer = csv.DictWriter(
             file,
             fieldnames=["split", "source_image", "source_label", "target_image", "target_label", "label_status"],
         )
         writer.writeheader()
-        writer.writerows([*train_rows, *test_rows])
+        all_rows = [*train_rows, *test_rows]
+        for rows in extra_rows.values():
+            all_rows.extend(rows)
+        writer.writerows(all_rows)
 
 
 def main() -> None:
@@ -358,12 +417,46 @@ def main() -> None:
     records, config = collect_records(data_yaml, args.split)
     selected = choose_subset(records, args)
     train_records, test_records = split_subset(selected, args.train_ratio, args.seed)
+    train_keys = {record.image.resolve() for record in train_records}
+    selected_keys = {record.image.resolve() for record in selected}
+    no_leak_records = [record for record in records if record.image.resolve() not in train_keys]
+    strict_holdout_records = [record for record in records if record.image.resolve() not in selected_keys]
 
     prepare_output(output, args.overwrite)
     train_rows = copy_records(train_records, "train", output, args.label_mode, args.allow_missing_labels)
     test_rows = copy_records(test_records, "test", output, args.label_mode, args.allow_missing_labels)
     yaml_path = write_yaml(output, config, args)
-    write_lists(output, train_rows, test_rows)
+
+    extra_rows: dict[str, list[dict[str, str]]] = {}
+    no_leak_yaml: Path | None = None
+    strict_yaml: Path | None = None
+    if args.final_test_mode in {"no-leak", "both"}:
+        no_leak_rows = copy_records(no_leak_records, "no_leak_test", output, "keep", args.allow_missing_labels)
+        extra_rows["no_leak_test"] = no_leak_rows
+        no_leak_yaml = write_eval_yaml(
+            output,
+            config,
+            args,
+            "no_leak_test",
+            "target_no_leak_test.yaml",
+            "无泄漏测试集：排除了微调训练图像，可用于训练后测试。",
+        )
+    if args.final_test_mode in {"strict", "both"}:
+        if strict_holdout_records:
+            strict_rows = copy_records(strict_holdout_records, "strict_holdout", output, "keep", args.allow_missing_labels)
+            extra_rows["strict_holdout"] = strict_rows
+            strict_yaml = write_eval_yaml(
+                output,
+                config,
+                args,
+                "strict_holdout",
+                "target_strict_holdout.yaml",
+                "严格最终测试集：排除了全部抽样图像，适合最终无偏评估。",
+            )
+        else:
+            print("警告：严格 holdout 为空，未生成 target_strict_holdout.yaml。请降低 --ratio 或 --count。")
+
+    write_lists(output, train_rows, test_rows, extra_rows)
 
     manifest = {
         "source_yaml": str(data_yaml),
@@ -378,6 +471,10 @@ def main() -> None:
         "train_ratio": args.train_ratio,
         "label_mode": args.label_mode,
         "dataset_yaml": str(yaml_path),
+        "no_leak_test_images": len(no_leak_records) if args.final_test_mode in {"no-leak", "both"} else 0,
+        "strict_holdout_images": len(strict_holdout_records) if args.final_test_mode in {"strict", "both"} else 0,
+        "no_leak_test_yaml": str(no_leak_yaml) if no_leak_yaml else "",
+        "strict_holdout_yaml": str(strict_yaml) if strict_yaml else "",
         "output": str(output),
     }
     (output / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -388,6 +485,10 @@ def main() -> None:
     print(f"  训练子集：{len(train_records)}")
     print(f"  测试/验证子集：{len(test_records)}")
     print(f"  数据集 YAML：{yaml_path}")
+    if no_leak_yaml:
+        print(f"  无泄漏测试 YAML：{no_leak_yaml}（排除训练子集，图像数={len(no_leak_records)}）")
+    if strict_yaml:
+        print(f"  严格最终测试 YAML：{strict_yaml}（排除全部抽样子集，图像数={len(strict_holdout_records)}）")
     print(f"  明细文件：{output / 'manifest.json'}")
 
 
